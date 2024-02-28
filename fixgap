@@ -127,3 +127,9 @@ SQL> ALTER DATABASE CLEAR LOGFILE GROUP [group number];
 
 NOTE: config FAL maybe wrong
 
+Check DG
+col name format a10;
+col value format a15;
+col datum_time format a20;
+col time_computed format a20;
+select name,value,datum_time,time_computed from v$dataguard_stats;
