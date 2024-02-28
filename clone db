@@ -1,1 +1,2 @@
-
+list summary backup;
+list backup of archivelog all;
