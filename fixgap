@@ -1,0 +1,128 @@
+# fix gap
+-- STANDBY
+SQL> ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
+2. Trên STANDBY DATABASE (cơ sở dữ liệu dự phòng) , tìm SCN sẽ được sử dụng để incremental backup tại cơ sở dữ liệu chính (Primary Database). Bạn cần sử dụng 'SCN thấp nhất' từ 3 truy vấn dưới đây:
+
+--STANDBY 
+SQL> SELECT CURRENT_SCN FROM V$DATABASE;
+
+CURRENT_SCN
+--------------
+3164433 
+
+SQL> select min(fhscn) from x$kcvfh;
+
+MIN(FHSCN)
+----------------
+3162298
+
+SQL> select min(f.fhscn) from x$kcvfh f, v$datafile d
+      where f.hxfil =d.file#
+        and d.enabled != 'READ ONLY'     ;
+
+MIN(F.FHSCN)
+----------------
+3162298
+3. Bạn cần sử dụng ' SCN thấp nhất ' từ 3 truy vấn, ở đây là -> SCN: 3162298. Trong RMAN, hãy kết nối với cơ sở dữ liệu PRIMARY và tạo bản incremental backup từ SCN được dẫn xuất ở bước trước:
+
+--PRIMARY 
+RMAN> BACKUP INCREMENTAL FROM SCN 3162298 DATABASE FORMAT '/tmp/ForStandby_%U' tag 'FORSTANDBY';
+--using service
+recover database from service ...; 
+recover database from service until scn  ...; ( current_scn primary ) 
+4. Chuyển tất cả các bộ backup được tạo trên hệ thống chính sang hệ thống dự phòng.
+
+--PRIMARY
+primary $ scp /tmp/ForStandby_* standby:/tmp
+Trên  STANDBY catalog các backup pieces để nó nhận được bản backup (thông tin này được ghi vào control file của Standby database):
+
+--STANDBY
+RMAN> CATALOG START WITH '/tmp/ForStandby'; 
+
+5. Khôi phục cơ sở dữ liệu STANDBY với incremental backup đã được catalog:
+
+--STANDBY 
+RMAN> RECOVER DATABASE NOREDO; 
+
+6. Trong RMAN, kết nối với cơ sở dữ liệu PRIMARY và tạo bản sao lưu standby control file:
+
+--PRIMARY 
+RMAN> BACKUP CURRENT CONTROLFILE FOR STANDBY FORMAT '/tmp/ForStandbyCTRL.bck';
+OR 
+--STANDBY 
+RMAN> restore standby controlfile from service ...;
+7. Sao chép bản sao standby control file vào hệ thống STANDBY .
+
+--PRIMARY 
+primary $ scp /tmp/ForStandbyCTRL.bck standby:/tmp
+8. Sao lưu vị trí của datafile ở standby trong trường hợp tên / vị trí datafile khác với tên / vị trí tệp Primary.
+
+--standby 
+SQL> spool datafile_names_step8.txt
+set lines 200
+col name format a60
+select file#, name from v$datafile order by file# ;
+spool off
+9. Từ RMAN, kết nối với cơ sở dữ liệu STANDBY và khôi phục standby control file:
+
+--STANDBY 
+RMAN> SHUTDOWN IMMEDIATE ;
+RMAN> STARTUP NOMOUNT; 
+RMAN> RESTORE STANDBY CONTROLFILE FROM '/tmp/ForStandbyCTRL.bck'; 
+
+Starting restore at 03-JUN-09 
+using target database control file instead of recovery catalog 
+allocated channel: ORA_DISK_1 
+channel ORA_DISK_1: sid=36 devtype=DISK 
+
+channel ORA_DISK_1: restoring control file 
+channel ORA_DISK_1: restore complete, elapsed time: 00:00:07 
+output filename=+DATA/mystd/controlfile/current.257.688583989 
+Finished restore at 03-JUN-09
+10. Tắt cơ sở dữ liệu STANDBY và startup mount:
+
+--STANDBY 
+SQL> SHUTDOWN; 
+SQL> STARTUP MOUNT;
+11. Vì control file được khôi phục từ PRIMARY, các vị trí datafile trong STANDBY controlfile  sẽ giống với cơ sở dữ liệu PRIMARY, vì vậy các catalog datafile trong STANDBY sẽ thực hiện các thao tác đổi tên cần thiết. Thực hiện bước dưới đây trong STANDBY cho mỗi diskgroup trong đó cấu trúc thư mục datafile giữa chế độ primary và chế độ standby là khác nhau.
+
+--STANDBY
+RMAN> CATALOG START WITH '+DATA/mystd/datafile/'; 
+
+List of Files Unknown to the Database 
+===================================== 
+File Name: +data/mystd/DATAFILE/SYSTEM.309.685535773 
+File Name: +data/mystd/DATAFILE/SYSAUX.301.685535773 
+File Name: +data/mystd/DATAFILE/UNDOTBS1.302.685535775 
+File Name: +data/mystd/DATAFILE/SYSTEM.297.688213333 
+File Name: +data/mystd/DATAFILE/SYSAUX.267.688213333 
+File Name: +data/mystd/DATAFILE/UNDOTBS1.268.688213335 
+
+Do you really want to catalog the above files (enter YES or NO)? YES 
+cataloging files... 
+cataloging done 
+
+List of Cataloged Files 
+======================= 
+File Name: +data/mystd/DATAFILE/SYSTEM.297.688213333 
+File Name: +data/mystd/DATAFILE/SYSAUX.267.688213333 
+File Name: +data/mystd/DATAFILE/UNDOTBS1.268.688213335
+12. Chuyển các datafile sang tên chính xác của nó tại standby :
+
+--fix location
+list copy of database;
+list incarnation;
+reset database to incarnation 2;
+
+--STANDBY 
+RMAN> SWITCH DATABASE TO COPY; 
+
+datafile 1 switched to datafile copy "+DATA/mystd/datafile/system.297.688213333" 
+datafile 2 switched to datafile copy "+DATA/mystd/datafile/undotbs1.268.688213335" 
+datafile 3 switched to datafile copy "+DATA/mystd/datafile/sysaux.267.688213333"
+13. Trên cơ sở dữ liệu ở standby, xóa tất cả các standby redo log group:
+
+--STANDBY 
+SQL> ALTER DATABASE CLEAR LOGFILE GROUP [group number];
+
+
