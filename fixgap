@@ -125,4 +125,5 @@ datafile 3 switched to datafile copy "+DATA/mystd/datafile/sysaux.267.688213333"
 --STANDBY 
 SQL> ALTER DATABASE CLEAR LOGFILE GROUP [group number];
 
+NOTE: config FAL maybe wrong
 
