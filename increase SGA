@@ -1,0 +1,25 @@
+# increase SGA 
+PHASE 1: PRECHECK
+-check shmmax 
+sysctl -a ( see all kernel parameter ) 
+cat /proc/sys/kernel/shmmax
+shmmax  = 2147483648
+cat /etc/sysctl.conf | grep shmmax 
+---ipcs -l
+------ Shared Memory Limits --------
+   max number of segments = 4096               // SHMMNI	
+   max seg size (kbytes) = 32768               // SHMMAX
+   max total shared memory (kbytes) = 8388608  // SHMALL
+   min seg size (bytes) = 1
+
+   ------ Semaphore Limits --------
+   max number of arrays = 1024                 // SEMMNI
+   max semaphores per array = 250              // SEMMSL
+   max semaphores system wide = 256000         // SEMMNS
+   max ops per semop call = 32                 // SEMOPM
+   semaphore max value = 32767
+
+   ------ Messages: Limits --------
+   max queues system wide = 1024               // MSGMNI
+   max size of message (bytes) = 65536         // MSGMAX
+   default max size of queue (bytes) = 65536   // MSGMNB
