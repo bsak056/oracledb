@@ -1,0 +1,6 @@
+1 check dba_segments và datafile chuẩn bị làm 
+2 qua dr check asm ( check xem đủ chỗ được không ) 
+3 select distinct segment_type from
+4 move index ( rat lau )
+5 xoa tablespace cu~ 
+6 check size lai ( truoc va sau )
