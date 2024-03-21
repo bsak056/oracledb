@@ -2,3 +2,6 @@ DISK AIX https://orasg.wordpress.com/2015/10/04/managing-raw-disks-in-aix-to-use
 NFS AIX => LINUX  
     AIX etc/exports /data01 -rw,access=ip clent,root= ip clent 
     LINUX mount -o rw,nolock,nfsvers=3 ipserver:/data01
+
+REMEMBER before install grid 
+pls runcluvy with -method root for check everything 
