@@ -5,3 +5,10 @@ NFS AIX => LINUX
 
 REMEMBER before install grid 
 pls runcluvy with -method root for check everything 
+
+patch 
+if grid 11 
+before patching using export USER=grid and echo again for checking
+db 11 is aswell
+if grid 19
+do nothing just run patch if have fixxed all in runcluvy 
