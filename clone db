@@ -5,8 +5,8 @@ list backup of archivelog all;
 
 rman target/ log=/u02/UATDBDCDR_backup/rs_full.log << EOS
 run {
-set newname for tempfile 1 to '+DATAC1/UATONEDBDR/DATAFILE/%b';
-set newname for database to '+DATAC1/UATONEDBDR/TEMPFILE/%b';
+set newname for tempfile 1 to '+DATAC1/UATONEDBDR/TEMPFILE/%b';
+set newname for database to '+DATAC1/UATONEDBDR/DATAFILE/%b';
 restore database;
 switch datafile all;
 switch tempfile all;
