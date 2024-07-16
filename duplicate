@@ -1,0 +1,19 @@
+rman TARGET sys/welcome1@ORCL AUXILIARY sys/welcome1@DRORCL
+#clone DB
+run {
+DUPLICATE TARGET DATABASE to oravn;  ( oravn name db need clone )
+}
+
+
+#active dataguard
+run {
+allocate channel c1 device type disk;
+allocate channel c2 device type disk;
+allocate channel c3 device type disk;
+DUPLICATE TARGET DATABASE
+  FOR STANDBY
+  FROM ACTIVE DATABASE
+  DORECOVER
+  NOFILENAMECHECK;
+}
+
