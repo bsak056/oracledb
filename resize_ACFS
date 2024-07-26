@@ -1,0 +1,22 @@
+resize ACFS 
+formart disk and add disk to disk group
+after that can resize ACFS
+
+check disk 
+df -h
+Filesystem             Size  Used Avail Use% Mounted on
+devtmpfs               3.9G     0  3.9G   0% /dev
+tmpfs                  3.9G  637M  3.3G  17% /dev/shm
+tmpfs                  3.9G  9.0M  3.9G   1% /run
+tmpfs                  3.9G     0  3.9G   0% /sys/fs/cgroup
+/dev/mapper/ol-root     42G   27G   16G  64% /
+/dev/mapper/ol-home     21G   33M   21G   1% /home
+/dev/sda1             1014M  236M  779M  24% /boot
+tmpfs                  786M     0  786M   0% /run/user/0
+tmpfs                  786M     0  786M   0% /run/user/54322
+/dev/asm/dbhome_1-158   10G  329M  9.7G   4% /acfs_test
+
+running this root
+- acfsutil size +5G -d /dev/asm/dbhome_1-158 /acfs_test
+Done
+noted can - or +
