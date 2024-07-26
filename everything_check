@@ -1,0 +1,38 @@
+#check file dest convert
+col name format a10
+select name, round (space_limit/1048576) As space_limit,round(space_used/1048576) As space_used from v$recovery_file_dest; 
+
+#check and kill lock session
+select inst_id ,event, count (*) from gv$session where username is not null and status='ACTIVE' group by inst_id,event order by 1;
+---------------------------------
+column blocker_session format a30 
+COLUMN blocker_session HEADING 'BROKER|USERNAME/MACHINE/MODULE'  
+column broker_sid_serial format a20  
+COLUMN broker_sid_serial HEADING 'INST_SID_SERIAL#'  
+column blockee_session format a30  
+COLUMN blockee_session HEADING 'BROKING|USERNAME/MACHINE/MODULE'  
+column brokee_sid_serial format a20  
+COLUMN brokee_sid_serial HEADING 'INST_SID_SERIAL#'  
+SELECT (SELECT username||'|'||MACHINE||'|'||MODULE FROM gv$session WHERE sid = a.sid and inst_id=a.inst_id) blocker_session,  a.inst_id ,(SELECT inst_id||'_'||SID||'_'||SERIAL# FROM gv$session WHERE sid = a.sid and inst_id=a.inst_id) broker_sid_serial,  
+ (SELECT username||'|'||MACHINE||'|'||MODULE FROM gv$session WHERE sid = b.sid and inst_id=b.inst_id) blockee_session, b.inst_id, (SELECT inst_id||'_'||SID||'_'||SERIAL# FROM gv$session WHERE sid = b.sid and inst_id=b.inst_id) brokee_sid_serial  
+FROM gv$lock a, gv$lock b WHERE a.block = 1 AND b.request > 0 AND a.id1 = b.id1 AND a.id2 = b.id2;
+-----------------------------------
+select 'kill -9 '||p.spid
+from gv$session s ,gv$process p where s.inst_id||'_'||s.sid||'_'||s.serial#='&inst_sid_serial' and s.inst_id||'.'||s.paddr=p.inst_id||'.'||p.addr;
+-----------------------------------
+@?/rdbms/admin/addm
+-----------------------------------
+select a.session_id, a.oracle_username, a.os_user_name, a.process, b.owner,  b.object_name, b.subobject_name, b.object_type
+from v$locked_object a, all_objects b
+where a.object_id = b.object_id and locked_mode = 3
+ order by oracle_username, session_id;
+--------------------------------------
+#Check datafile full infomation
+set pages 999
+set lines 400
+col FILE_NAME format a75
+select d.TABLESPACE_NAME, d.FILE_NAME, d.BYTES/1024/1024 SIZE_MB, d.AUTOEXTENSIBLE, d.MAXBYTES/1024/1024 MAXSIZE_MB, d.INCREMENT_BY*(v.BLOCK_SIZE/1024)/1024 INCREMENT_BY_MB
+from dba_data_files d,
+ v$datafile v
+where d.FILE_ID = v.FILE#
+order by d.TABLESPACE_NAME, d.FILE_NAME;
