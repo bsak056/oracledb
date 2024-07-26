@@ -36,3 +36,9 @@ from dba_data_files d,
  v$datafile v
 where d.FILE_ID = v.FILE#
 order by d.TABLESPACE_NAME, d.FILE_NAME;
+
+#add more datafile to tablespace or increase TBS
+ALTER TABLESPACE DBVIMES
+ADD DATAFILE '+DATA'
+  SIZE 20G
+  AUTOEXTEND ON;
