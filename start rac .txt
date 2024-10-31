@@ -1,0 +1,63 @@
+srvctl start database
+The formal command to startup a RAC database is srvctl start database.
+
+[oracle@primary01 ~]$ srvctl start database -d orclcdb
+[oracle@primary01 ~]$ srvctl status database -d orclcdb
+Instance ORCLCDB1 is running on node primary01
+Instance ORCLCDB2 is running on node primary02
+Without specifying startup option, the standard startup brings your database to the default state. Of course, you can also change the default startup option by srvctl modify database for your database.
+
+There're several useful commands that we can use to start a RAC database.
+
+srvctl start database NOMOUNT
+srvctl start database MOUNT
+srvctl start database OPEN
+srvctl start database READ ONLY
+srvctl start database Restricted Mode
+NOMOUNT
+To start a cluster database to NOMOUNT on all nodes in a RAC, you have to use SRVCTL.
+
+[oracle@primary01 ~]$ srvctl start database -d orclcdb -o nomount
+MOUNT
+To start a cluster database to MOUNT on all nodes in a RAC, you have to use SRVCTL.
+
+[oracle@primary01 ~]$ srvctl start database -d orclcdb -o mount
+OPEN
+To start a cluster database to OPEN on all nodes in a RAC, you have to use SRVCTL.
+
+[oracle@primary01 ~]$ srvctl start database -d orclcdb -o open
+If you have never changed the default start option which is OPEN, you can omit it by this.
+
+[oracle@primary01 ~]$ srvctl start database -d orclcdb
+READ ONLY
+To start a cluster database to READ ONLY on all nodes in a RAC, you have to use SRVCTL.
+
+[oracle@primary01 ~]$ srvctl start database -d orclcdb -o "read only"
+The double quotes are required to enclose multiple-word options like "read only" and "read write".
+
+Restricted Mode
+To open a RAC database to restricted mode, the start option is "restrict".
+
+[oracle@primary01 ~]$ srvctl start database -d orclcdb -o restrict
+[oracle@primary01 ~]$ srvctl status database -d orclcdb -v
+Instance ORCLCDB1 is running on node primary01. Instance status: Restricted Access.
+Instance ORCLCDB2 is running on node primary02. Instance status: Restricted Access.
+To leave the restricted mode of a database, you should do it for each instance.
+
+Please note that, if the default startup option has already been your desired mode, you can omit the startup option -o, even though explicitly specifying startup option is more understandable.
+
+srvctl start instance
+To startup only one instance, we use srvctl start instance.
+
+For example, we just want to open the instance on the first node.
+
+[oracle@primary01 ~]$ srvctl start instance -d orclcdb -i ORCLCDB1
+Please note that, the instance name is case-sensitive.
+
+Additionally, we can put the instance in restricted mode.
+
+[oracle@primary01 ~]$ srvctl start instance -d orclcdb -i ORCLCDB1 -o restrict
+[oracle@primary01 ~]$ srvctl status database -d orclcdb -v
+Instance ORCLCDB1 is running on node primary01. Instance status: Restricted Access.
+Instance ORCLCDB2 is not running on node primary02
+Sometimes, you may want to start just only one instance for special operations, like changing the name of a PDB or moving wallet out of ASM.

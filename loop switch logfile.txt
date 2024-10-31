@@ -1,0 +1,9 @@
+scipt loop switch logfile
+
+begin
+while(true) loop
+execute immediate 'alter system switch logfile';
+DBMS_LOCK.sleep(20);
+end loop;
+end;
+/

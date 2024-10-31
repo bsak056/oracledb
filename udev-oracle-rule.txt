@@ -1,0 +1,175 @@
+Configure UDEV Rules for Oracle ASM
+
+If ASMLIB kernel drivers are not available then we have to use udev rules to create the disks for Oracle ASM.
+
+Setting up Oracle ASM udev rules is not so complicated. All you need is the udevadm command and editing one file.
+
+
+1. List the disks
+
+[root@testbox ~]# lsblk
+NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda           8:0    0  100G  0 disk
+├─sda1        8:1    0    1G  0 part /boot
+└─sda2        8:2    0   99G  0 part
+  ├─ol-root 252:0    0 61.2G  0 lvm  /
+  ├─ol-swap 252:1    0  7.9G  0 lvm  [SWAP]
+  └─ol-home 252:2    0 29.9G  0 lvm  /home
+sdb           8:16   0  100G  0 disk
+└─sdb1        8:17   0  100G  0 part /u01
+sdc           8:32   0  100G  0 disk
+└─sdc1        8:33   0  100G  0 part /orabackup
+sdd           8:48   0  100G  0 disk
+sde           8:64   0  100G  0 disk
+sr0          11:0    1 47.3M  0 rom
+[root@testbox ~]#
+
+2. Create partitions for the disks
+
+fdisk /dev/sdd
+fdisk /dev/sde
+
+[root@testbox ~]# fdisk /dev/sdd
+
+Welcome to fdisk (util-linux 2.32.1).
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+Device does not contain a recognized partition table.
+Created a new DOS disklabel with disk identifier 0x8c782d71.
+
+Command (m for help): n
+Partition type
+   p   primary (0 primary, 0 extended, 4 free)
+   e   extended (container for logical partitions)
+Select (default p):
+
+Using default response p.
+Partition number (1-4, default 1):
+First sector (2048-209715199, default 2048):
+Last sector, +sectors or +size{K,M,G,T,P} (2048-209715199, default 209715199):
+
+Created a new partition 1 of type 'Linux' and of size 100 GiB.
+
+Command (m for help): w
+The partition table has been altered.
+Calling ioctl() to re-read partition table.
+Syncing disks.
+
+[root@testbox ~]#
+[root@testbox ~]# fdisk /dev/sde
+
+Welcome to fdisk (util-linux 2.32.1).
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+Device does not contain a recognized partition table.
+Created a new DOS disklabel with disk identifier 0x36462c72.
+
+Command (m for help): n
+Partition type
+   p   primary (0 primary, 0 extended, 4 free)
+   e   extended (container for logical partitions)
+Select (default p):
+
+Using default response p.
+Partition number (1-4, default 1):
+First sector (2048-209715199, default 2048):
+Last sector, +sectors or +size{K,M,G,T,P} (2048-209715199, default 209715199):
+
+Created a new partition 1 of type 'Linux' and of size 100 GiB.
+
+Command (m for help): w
+The partition table has been altered.
+Calling ioctl() to re-read partition table.
+Syncing disks.
+
+[root@testbox ~]#
+
+3. Load updated block device partition tables
+
+# For Linux 5,6 and 7
+
+# /sbin/partprobe /dev/sdd1
+# /sbin/partprobe /dev/sde1
+
+# For Linux8
+
+[root@testbox ~]# /sbin/partx -u /dev/sdd1
+[root@testbox ~]#
+[root@testbox ~]# /sbin/partx -u /dev/sde1
+[root@testbox ~]#
+
+4. Find SCSI ID
+
+[root@testbox ~]# /usr/lib/udev/scsi_id -g -u -d /dev/sdd
+1ATA_VBOX_HARDDISK_VB0adc00d9-c5938e95
+[root@testbox ~]#
+
+[root@testbox ~]# /usr/lib/udev/scsi_id -g -u -d /dev/sde
+1ATA_VBOX_HARDDISK_VBdaa5e829-52e4b9b1
+[root@testbox ~]#
+
+5. Create udev rules
+
+[root@testbox ~]# ls -ltr /etc/udev/rules.d
+total 12
+-rw-r--r--. 1 root root  67 Oct  2 18:03 69-vdo-start-by-dev.rules
+-rw-r--r--. 1 root root 148 Nov  9 06:11 99-vmware-scsi-timeout.rules
+-rw-r--r--. 1 root root 134 Apr  1 07:52 60-vboxadd.rules
+[root@testbox ~]#
+
+vi /etc/udev/rules.d/99-oracle-asmdevices.rules
+and below lines and then save it.
+
+KERNEL=="sd?1", SUBSYSTEM=="block", PROGRAM=="/usr/lib/udev/scsi_id -g -u -d /dev/$parent", RESULT=="1ATA_VBOX_HARDDISK_VB0adc00d9-c5938e95", SYMLINK+="oracleasm/disks/DISK01", OWNER="grid", GROUP="asmadmin", MODE="0660"
+KERNEL=="sd?1", SUBSYSTEM=="block", PROGRAM=="/usr/lib/udev/scsi_id -g -u -d /dev/$parent", RESULT=="1ATA_VBOX_HARDDISK_VBdaa5e829-52e4b9b1", SYMLINK+="oracleasm/disks/DISK02", OWNER="grid", GROUP="asmadmin", MODE="0660"
+
+
+[root@testbox ~]# cat /etc/udev/rules.d/99-oracle-asmdevices.rules
+KERNEL=="sd?1", SUBSYSTEM=="block", PROGRAM=="/usr/lib/udev/scsi_id -g -u -d /dev/$parent", RESULT=="1ATA_VBOX_HARDDISK_VB0adc00d9-c5938e95", SYMLINK+="oracleasm/disks/DISK01", OWNER="grid", GROUP="asmadmin", MODE="0660"
+KERNEL=="sd?1", SUBSYSTEM=="block", PROGRAM=="/usr/lib/udev/scsi_id -g -u -d /dev/$parent", RESULT=="1ATA_VBOX_HARDDISK_VBdaa5e829-52e4b9b1", SYMLINK+="oracleasm/disks/DISK02", OWNER="grid", GROUP="asmadmin", MODE="0660"
+[root@testbox ~]#
+
+[root@testbox ~]# ls -ltr /etc/udev/rules.d/99-oracle-asmdevices.rules
+-rw-r--r--. 1 root root 428 Apr  2 02:18 /etc/udev/rules.d/99-oracle-asmdevices.rules
+[root@testbox ~]#
+
+6. Reload the udev rules
+
+The below commands will reload the complete udev configuration and will trigger all the udev rules. 
+On a busy production system this could disrupt ongoing operations, applications running on the server. Please use the below command during a scheduled maintenance window only.
+
+[root@testbox ~]# /sbin/udevadm control --reload-rules
+[root@testbox ~]#
+[root@testbox ~]# ls -ld /dev/sd*1
+brw-rw----. 1 root disk 8,  1 Apr  2 02:23 /dev/sda1
+brw-rw----. 1 root disk 8, 17 Apr  2 02:23 /dev/sdb1
+brw-rw----. 1 root disk 8, 33 Apr  2 02:23 /dev/sdc1
+brw-rw----. 1 root disk 8, 49 Apr  2 02:23 /dev/sdd1
+brw-rw----. 1 root disk 8, 65 Apr  2 02:23 /dev/sde1
+[root@testbox ~]#
+[root@testbox ~]# /sbin/udevadm trigger
+[root@testbox ~]#
+[root@testbox ~]# ls -ld /dev/sd*1
+brw-rw----. 1 root disk     8,  1 Apr  2 02:34 /dev/sda1
+brw-rw----. 1 root disk     8, 17 Apr  2 02:34 /dev/sdb1
+brw-rw----. 1 root disk     8, 33 Apr  2 02:34 /dev/sdc1
+brw-rw----. 1 grid asmadmin 8, 49 Apr  2 02:34 /dev/sdd1
+brw-rw----. 1 grid asmadmin 8, 65 Apr  2 02:34 /dev/sde1
+[root@testbox ~]#
+
+7. List the oracleasm disks
+
+[root@testbox ~]# ls -ltra /dev/oracleasm/disks/*
+lrwxrwxrwx. 1 root root 10 Apr  2 02:34 /dev/oracleasm/disks/DISK01 -> ../../sdd1
+lrwxrwxrwx. 1 root root 10 Apr  2 02:34 /dev/oracleasm/disks/DISK02 -> ../../sde1
+[root@testbox ~]#
+
+[root@testbox ~]# ls -ld /dev/sd*1
+brw-rw----. 1 root disk     8,  1 Apr  2 02:34 /dev/sda1
+brw-rw----. 1 root disk     8, 17 Apr  2 02:34 /dev/sdb1
+brw-rw----. 1 root disk     8, 33 Apr  2 02:34 /dev/sdc1
+brw-rw----. 1 grid asmadmin 8, 49 Apr  2 02:34 /dev/sdd1
+brw-rw----. 1 grid asmadmin 8, 65 Apr  2 02:34 /dev/sde1
+[root@testbox ~]#

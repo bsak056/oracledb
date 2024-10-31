@@ -1,0 +1,56 @@
+restore point in time 
+
+export NLS_DATE_FORMAT='yyyy-mm-dd hh24:mi:ss' 
+***********************
+RMAN> alter session set nls_date_format = 'YYYY-MM-DD HH24:MI:SS';
+***********************
+Các bước thực hiện recovery:
+1. Mount hay open Oracle database. Mount database khi thực hiện phục hồi toàn bộ database, hay open database khi thực hiện online tablespace/datafile recovery.
+
+2. Thực hiện phục hồi không đầy đủ (incomplete recovery), sử dụng lệnh SET UNTIL để xác định thời gian, SCN, hay log sequence number mà quá trình phục hồi kết thúc. Có thể thay bằng mệnh đề UNTIL trong lệnh RESTORE và RECOVER.
+
+3. Khôi phục những datafile cần thiết với lệnh RESTORE
+
+4. Phục hồi các datafile với lệnh RECOVER
+
+5. Đặt database trong chế độ hoạt động  bình thường. Ví dụ, open hay đặt tablespaces/datafiles vào chế độ online.
+
+1. Xác định mục tiêu khôi phục: Có thể là theo thời gian, SCN, điểm khôi phục hoặc số số sequence. Ví dụ: nếu bạn biết rằng một số giao dịch nhầm (truncate hoặc drop table ...purge) đã được thực thi vào lúc 3:00 PM ngày hôm qua, thì bạn có thể chọn 2:59 PM ngày hôm qua làm thời điểm khôi phục mục tiêu. 
+
+2. Đặt các biến môi trường HĐH: Hỗ trợ Ngôn ngữ Quốc gia (NLS) để các hằng số thời gian cung cấp cho RMAN được định dạng chính xác. Đây là một số cài đặt ví dụ:
+$ export NLS_LANG = american_america.us7ascii
+$ export NLS_DATE_FORMAT='yyyy-mm-dd hh24:mi:ss'
+
+3. Mount cơ sở dữ liệu: Nếu nó đã được OPEN, phải tắt nó trước, như trong ví dụ này:
+RMAN> shutdown immediate
+RMAN> startup mount
+
+4. Tạo một khối RUN và chạy : 
+Các lệnh RECOVER và RESTORE phải giống nhau Khối RUN để cài đặt UNTIL áp dụng cho cả hai. Ví dụ: nếu bạn chọn khôi phục lại cụ thể là SCN, lệnh RESTORE cần biết giá trị đó để nó khôi phục các tệp từ các bản sao lưu đã đủ cũ, đó là các bản sao lưu có từ trước SCN. Đây là một ví dụ về khối RUN:
+RUN
+{
+alter session set nls_date_format = 'YYYY-MM-DD HH24:MI:SS';
+SET UNTIL TIME '2023-10-03 16:10:53';
+RESTORE DATABASE;
+RECOVER DATABASE;
+}
+
+5. Mở cơ sở dữ liệu ở chế độ READ ONLY: 
+Ngay sau khi bạn mở cơ sở dữ liệu để đọc / ghi, đảm bảo chỉ bạn thực hiện. Vì vậy, trước tiên, hãy mở cơ sở dữ liệu READ ONLY và xem một số dữ liệu, để kiểm tra xem phục hồi đã làm đúng như những gì bạn mong đợi.
+RMAN> SQL 'ALTER DATABASE OPEN READ ONLY';
+
+6. Mở cơ sở dữ liệu bằng RESETLOGS: Nếu kết quả phục hồi đúng yêu cầu, hãy mở cơ sở dữ liệu với tùy chọn RESETLOGS:
+RMAN> ALTER DATABASE OPEN RESETLOGS;
+
+CÁC CÂU LỆNH KHÁC
+RMAN> SET UNTIL TIME ’04-23-2010:23:50:04’;
+RMAN> RESTORE DATABASE UNTIL SCN 154876;
+RMAN> RESTORE DATABASE UNTIL TIME '2023-10-03 16:10:53';
+RMAN> RECOVER DATABASE UNTIL SCN 154876;
+RMAN> RECOVER DATABASE UNTIL TIME ’04-23-2010:23:50:04’;
+MAN> RESTORE ARCHIVELOG LOW LOGSEQ 78311 HIGH LOGSEQ 78340 THREAD 1 ALL;
+
+RMAN> RESTORE ARCHIVELOG FROM LOGSEQ=21531 UNTIL LOGSEQ=21590;
+
+RMAN> ALTER DATABASE OPEN RESETLOGS;
+

@@ -1,0 +1,51 @@
+#Create TOOLS tablespace
+create tablespace TOOLS1 datafile '+&in_TBS' size 100m autoextend on maxsize 10G;
+define default_tablespace='TOOLS'
+define temporary_tablespace='TEMP'
+define perfstat_password='Oracle_4U'
+@?/rdbms/admin/spcreate
+
+#-----INSTALLING
+echo
+echo "<<=====================================================>>"
+echo "<<=====================INSTALLING..====================>>"
+echo "<<=====================================================>>"
+echo
+sqlplus -s / as sysdba <<EOF
+define default_tablespace='TOOLS'
+define temporary_tablespace='TEMP'
+define perfstat_password='Oracle_4U'
+create tablespace TOOLS2 datafile '+&in_TBS' size 100m autoextend on maxsize 10G;
+@?/rdbms/admin/spcreate
+exit
+EOF
+fi
+echo
+echo "********************"
+echo "* INSTALLING DONE. *"
+echo "********************"
+
+
+TEMPFILE=/tmp/tmpawr.sql
+echo "<<=====================================================>>"
+echo "AWRRPT: @$ORACLE_HOME/rdbms/admin/awrrpt.sql"
+echo "<<=====================================================>>"
+echo
+sqlplus -s / as sysdba <<EOF >/dev/null
+set echo off
+set head off
+set feed off
+spool ${TEMPFILE}
+select 'define begin_snap = '|| (max(snap_id)-24) from dba_hist_snapshot;
+select 'define end_snap = '|| max(snap_id) from dba_hist_snapshot;
+select 'define report_type = ' || '''html''' from dual;
+select 'define inst_name = ' || INSTANCE_NAME from v\$instance;
+select 'define db_name = ' || name from v\$database;
+select 'define dbid = ' || dbid from v\$database;
+select 'define inst_num = ' || INSTANCE_NUMBER from v\$instance;
+select 'define num_days = 1' from dual;
+select 'define report_name = awrrpt_${time}_' || INSTANCE_NAME from v\$instance;
+select '@$ORACLE_HOME/rdbms/admin/awrrpt.sql' from dual;
+spool off
+exit
+EOF

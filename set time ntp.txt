@@ -1,0 +1,4 @@
+set time ntp 
+
+install ntp 
+timedatectl set-ntp true

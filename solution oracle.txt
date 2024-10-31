@@ -1,0 +1,25 @@
+tong hop loi oracle
+
+Backup of Oracle RAC (Real Application Cluster) database fails with an error: RMAN-06059: expected archived log not found
+
+Starting backup
+current log archived
+released channel: t1
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03002: failure of backup command at 14:24:55
+RMAN-06059: expected archived log not found, lost of archived log
+compromises recoverability
+ORA-19625: error identifying file /u02/oradata/scr9/archive/1_1160.dbf
+ORA-27037: unable to obtain file status
+Linux Error: 2: No such file or directory
+Additional information: 3
+ 
+Solution
+RMAN is looking for an archived log that is missing. Running the following command will perform a cross check of the log files and delete the reference to the lost file and will skip that log file during the backup process.
+
+Login to the database server and invoke RMAN
+
+$rman target /
+RMAN>change archivelog all crosscheck;

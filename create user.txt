@@ -1,0 +1,34 @@
+create user
+
+create user test99 default tablespace USERS_TEMP identified by abcd1234;
+
+grant dba to test;
+
+connect test
+
+create table TEST11 (id NUMBER(10));
+CREATE TABLE flashback_drop_test(id NUMBER(10));
+
+INSERT INTO flashback_drop_test (id) VALUES (1);
+INSERT INTO TEST11 (id) VALUES (1);
+
+drop table TEST11;
+
+check schema
+
+select username as schema_name
+from sys.all_users
+order by username;
+
+check table had in schema
+SELECT DISTINCT OWNER, OBJECT_NAME 
+  FROM DBA_OBJECTS
+ WHERE OBJECT_TYPE = 'TABLE'
+   AND OWNER = 'TEST99'
+   
+create tablespace 
+
+https://logic.edchen.org/create-tablespace-examples/
+create tablespace erptbs1 datafile '+DATA/erptbs_01.dbf' size 10m autoextend on next 10m; 
+create tablespace erptbs2 datafile '+DATA/erptbs_02.dbf' size 10m autoextend on next 10m;
+create tablespace erptbs3 datafile '+DATA/erptbs_03.dbf' size 10m autoextend on next 10m;

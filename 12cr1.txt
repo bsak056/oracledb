@@ -1,0 +1,44 @@
+install rac 12c1
+
+groupadd -g 54323 oper
+groupadd -g 54327 backupdba
+groupadd -g 54328 dgdba
+groupadd -g 54329 kmdba
+
+# Public
+
+10.0.2.15 rac1.localdomain rac1
+10.0.2.16 rac2.localdomain rac2
+
+# Private
+
+192.168.56.142 rac1-priv.localdomain rac1-priv
+192.168.56.143 rac2-priv.localdomain rac2-priv
+
+# Virtual
+
+10.0.2.52 rac1-vip.localdomain rac1-vip
+10.0.2.53 rac2-vip.localdomain rac2-vip
+
+# SCAN
+
+10.0.2.61 rac-scan.localdomain rac-scan
+10.0.2.62 rac-scan.localdomain rac-scan
+10.0.2.43 rac-scan.localdomain rac-scan
+
+group creation 
+groupadd -g 5001 oinstall
+groupadd -g 5002 dba
+groupadd -g 5003 oper
+groupadd -g 54337 asmadmin
+groupadd -g 54338 asmdba
+groupadd -g 54339 asmoper
+
+User creation
+usermod -u 5007 -g oinstall -G dba,oper,asmdba,oinstall,backupdba,dgdba,kmdba,racdba oracle
+useradd -g oinstall -G asmadmin,asmdba,asmoper,dba grid
+
+usermod -g -G dba,oper,asmdba,dgdba,kmdba,racdba,backupdba oracle
+
+passwd oracle
+passwd grid

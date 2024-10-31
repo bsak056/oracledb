@@ -1,0 +1,621 @@
+[root@dbprdmob2 ~]# lsblk
+NAME                        MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+sda                           8:0    0 446.6G  0 disk  
+├─sda1                        8:1    0   200M  0 part  /boot/efi
+├─sda2                        8:2    0   500M  0 part  /boot
+└─sda3                        8:3    0   446G  0 part  
+  ├─vg_ol00-lv_root         252:0    0   100G  0 lvm   /
+  ├─vg_ol00-lv_swap         252:1    0    16G  0 lvm   [SWAP]
+  ├─vg_ol00-lv_home         252:2    0    50G  0 lvm   /home
+  ├─vg_ol00-lv_grid_diag    252:3    0   100G  0 lvm   
+  └─vg_ol00-lv_oracle_diag  252:4    0   100G  0 lvm   
+sdb                           8:16   0    20G  0 disk  
+└─DC-PRD-RAC-OCR-1          252:5    0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-1p1      252:7    0    20G  0 part  
+sdc                           8:32   0    20G  0 disk  
+└─DC-PRD-RAC-OCR-2          252:10   0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-2p1      252:15   0    20G  0 part  
+sdd                           8:48   0    20G  0 disk  
+└─DC-PRD-RAC-OCR-3          252:6    0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-3p1      252:9    0    20G  0 part  
+sde                           8:64   0    50G  0 disk  
+└─DC-PRD-RAC-MGMT-1         252:8    0    50G  0 mpath 
+  └─DC-PRD-RAC-MGMT-1p1     252:12   0    50G  0 part  
+sdf                           8:80   0    50G  0 disk  
+└─DC-PRD-RAC-MGMT-2         252:11   0    50G  0 mpath 
+  └─DC-PRD-RAC-MGMT-2p1     252:18   0    50G  0 part  
+sdg                           8:96   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-1         252:16   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-1p1     252:24   0   500G  0 part  
+sdh                           8:112  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-2         252:13   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-2p1     252:21   0   500G  0 part  
+sdi                           8:128  0   250G  0 disk  
+└─DC-PRD-RAC-FRA-1          252:19   0   250G  0 mpath 
+  └─DC-PRD-RAC-FRA-1p1      252:28   0   250G  0 part  
+sdj                           8:144  0   250G  0 disk  
+└─DC-PRD-RAC-FRA-2          252:17   0   250G  0 mpath 
+  └─DC-PRD-RAC-FRA-2p1      252:26   0   250G  0 part  
+sdk                           8:160  0     1T  0 disk  
+└─DC-PRD-RAC-BACKUP-1       252:14   0     1T  0 mpath 
+  └─vgracbackup-lvracbackup 252:47   0   1.5T  0 lvm   /backuprman1
+sdl                           8:176  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-5         252:20   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-5p1     252:31   0   500G  0 part  
+sdm                           8:192  0   100G  0 disk  
+└─DC-PRD-RAC-DB02-U01       252:23   0   100G  0 mpath 
+  └─DC-PRD-RAC-DB02-U01p1   252:36   0   100G  0 part  /u01
+sdn                           8:208  0     1T  0 disk  
+└─DC-PRD-RAC-EXPDB          252:22   0     1T  0 mpath 
+  └─DC-PRD-RAC-EXPDB1       252:33   0  1024G  0 part  /backupexp
+sdo                           8:224  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-3         252:25   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-3p1     252:35   0   500G  0 part  
+sdp                           8:240  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-4         252:27   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-4p1     252:37   0   500G  0 part  
+sdq                          65:0    0   500G  0 disk  
+└─DC-PRD-RAC-FRA-3          252:29   0   500G  0 mpath 
+  └─DC-PRD-RAC-FRA-3p1      252:38   0   500G  0 part  
+sdr                          65:16   0   500G  0 disk  
+└─DC-PRD-RAC-BACKUP-3       252:46   0   500G  0 mpath 
+  └─vgracbackup-lvracbackup 252:47   0   1.5T  0 lvm   /backuprman1
+sds                          65:32   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-6         252:30   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-6p1     252:39   0   500G  0 part  
+sdt                          65:48   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-7         252:32   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-7p1     252:41   0   500G  0 part  
+sdu                          65:64   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-8         252:40   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-8p1     252:44   0   500G  0 part  
+sdv                          65:80   0   500G  0 disk  
+└─DC-PRD-RAC-FRA-4          252:43   0   500G  0 mpath 
+  └─DC-PRD-RAC-FRA-4p1      252:45   0   500G  0 part  
+sdw                          65:96   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-9         252:34   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-9p1     252:42   0   500G  0 part  
+sdx                          65:112  0    20G  0 disk  
+└─DC-PRD-RAC-OCR-1          252:5    0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-1p1      252:7    0    20G  0 part  
+sdy                          65:128  0    20G  0 disk  
+└─DC-PRD-RAC-OCR-2          252:10   0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-2p1      252:15   0    20G  0 part  
+sdz                          65:144  0    20G  0 disk  
+└─DC-PRD-RAC-OCR-3          252:6    0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-3p1      252:9    0    20G  0 part  
+sr0                          11:0    1  1024M  0 rom   
+sdaa                         65:160  0    50G  0 disk  
+└─DC-PRD-RAC-MGMT-1         252:8    0    50G  0 mpath 
+  └─DC-PRD-RAC-MGMT-1p1     252:12   0    50G  0 part  
+sdab                         65:176  0    50G  0 disk  
+└─DC-PRD-RAC-MGMT-2         252:11   0    50G  0 mpath 
+  └─DC-PRD-RAC-MGMT-2p1     252:18   0    50G  0 part  
+sdac                         65:192  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-1         252:16   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-1p1     252:24   0   500G  0 part  
+sdad                         65:208  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-2         252:13   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-2p1     252:21   0   500G  0 part  
+sdae                         65:224  0   250G  0 disk  
+└─DC-PRD-RAC-FRA-1          252:19   0   250G  0 mpath 
+  └─DC-PRD-RAC-FRA-1p1      252:28   0   250G  0 part  
+sdaf                         65:240  0   250G  0 disk  
+└─DC-PRD-RAC-FRA-2          252:17   0   250G  0 mpath 
+  └─DC-PRD-RAC-FRA-2p1      252:26   0   250G  0 part  
+sdag                         66:0    0     1T  0 disk  
+└─DC-PRD-RAC-BACKUP-1       252:14   0     1T  0 mpath 
+  └─vgracbackup-lvracbackup 252:47   0   1.5T  0 lvm   /backuprman1
+sdah                         66:16   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-5         252:20   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-5p1     252:31   0   500G  0 part  
+sdai                         66:32   0   100G  0 disk  
+└─DC-PRD-RAC-DB02-U01       252:23   0   100G  0 mpath 
+  └─DC-PRD-RAC-DB02-U01p1   252:36   0   100G  0 part  /u01
+sdaj                         66:48   0     1T  0 disk  
+└─DC-PRD-RAC-EXPDB          252:22   0     1T  0 mpath 
+  └─DC-PRD-RAC-EXPDB1       252:33   0  1024G  0 part  /backupexp
+sdak                         66:64   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-3         252:25   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-3p1     252:35   0   500G  0 part  
+sdal                         66:80   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-4         252:27   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-4p1     252:37   0   500G  0 part  
+sdba                         67:64   0   250G  0 disk  
+└─DC-PRD-RAC-FRA-1          252:19   0   250G  0 mpath 
+  └─DC-PRD-RAC-FRA-1p1      252:28   0   250G  0 part  
+sdam                         66:96   0   500G  0 disk  
+└─DC-PRD-RAC-FRA-3          252:29   0   500G  0 mpath 
+  └─DC-PRD-RAC-FRA-3p1      252:38   0   500G  0 part  
+sdbb                         67:80   0   250G  0 disk  
+└─DC-PRD-RAC-FRA-2          252:17   0   250G  0 mpath 
+  └─DC-PRD-RAC-FRA-2p1      252:26   0   250G  0 part  
+sdan                         66:112  0   500G  0 disk  
+└─DC-PRD-RAC-BACKUP-3       252:46   0   500G  0 mpath 
+  └─vgracbackup-lvracbackup 252:47   0   1.5T  0 lvm   /backuprman1
+sdbc                         67:96   0     1T  0 disk  
+└─DC-PRD-RAC-BACKUP-1       252:14   0     1T  0 mpath 
+  └─vgracbackup-lvracbackup 252:47   0   1.5T  0 lvm   /backuprman1
+sdao                         66:128  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-6         252:30   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-6p1     252:39   0   500G  0 part  
+sdbd                         67:112  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-5         252:20   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-5p1     252:31   0   500G  0 part  
+sdbe                         67:128  0   100G  0 disk  
+└─DC-PRD-RAC-DB02-U01       252:23   0   100G  0 mpath 
+  └─DC-PRD-RAC-DB02-U01p1   252:36   0   100G  0 part  /u01
+sdap                         66:144  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-7         252:32   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-7p1     252:41   0   500G  0 part  
+sdbf                         67:144  0     1T  0 disk  
+└─DC-PRD-RAC-EXPDB          252:22   0     1T  0 mpath 
+  └─DC-PRD-RAC-EXPDB1       252:33   0  1024G  0 part  /backupexp
+sdaq                         66:160  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-8         252:40   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-8p1     252:44   0   500G  0 part  
+sdbg                         67:160  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-3         252:25   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-3p1     252:35   0   500G  0 part  
+sdar                         66:176  0   500G  0 disk  
+└─DC-PRD-RAC-FRA-4          252:43   0   500G  0 mpath 
+  └─DC-PRD-RAC-FRA-4p1      252:45   0   500G  0 part  
+sdbh                         67:176  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-4         252:27   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-4p1     252:37   0   500G  0 part  
+sdas                         66:192  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-9         252:34   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-9p1     252:42   0   500G  0 part  
+sdbi                         67:192  0   500G  0 disk  
+└─DC-PRD-RAC-FRA-3          252:29   0   500G  0 mpath 
+  └─DC-PRD-RAC-FRA-3p1      252:38   0   500G  0 part  
+sdat                         66:208  0    20G  0 disk  
+└─DC-PRD-RAC-OCR-1          252:5    0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-1p1      252:7    0    20G  0 part  
+sdbj                         67:208  0   500G  0 disk  
+└─DC-PRD-RAC-BACKUP-3       252:46   0   500G  0 mpath 
+  └─vgracbackup-lvracbackup 252:47   0   1.5T  0 lvm   /backuprman1
+sdau                         66:224  0    20G  0 disk  
+└─DC-PRD-RAC-OCR-2          252:10   0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-2p1      252:15   0    20G  0 part  
+sdbk                         67:224  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-6         252:30   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-6p1     252:39   0   500G  0 part  
+sdav                         66:240  0    20G  0 disk  
+└─DC-PRD-RAC-OCR-3          252:6    0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-3p1      252:9    0    20G  0 part  
+sdbl                         67:240  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-7         252:32   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-7p1     252:41   0   500G  0 part  
+sdca                         68:224  0   100G  0 disk  
+└─DC-PRD-RAC-DB02-U01       252:23   0   100G  0 mpath 
+  └─DC-PRD-RAC-DB02-U01p1   252:36   0   100G  0 part  /u01
+sdaw                         67:0    0    50G  0 disk  
+└─DC-PRD-RAC-MGMT-1         252:8    0    50G  0 mpath 
+  └─DC-PRD-RAC-MGMT-1p1     252:12   0    50G  0 part  
+sdbm                         68:0    0   500G  0 disk  
+└─DC-PRD-RAC-DATA-8         252:40   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-8p1     252:44   0   500G  0 part  
+sdcb                         68:240  0     1T  0 disk  
+└─DC-PRD-RAC-EXPDB          252:22   0     1T  0 mpath 
+  └─DC-PRD-RAC-EXPDB1       252:33   0  1024G  0 part  /backupexp
+sdax                         67:16   0    50G  0 disk  
+└─DC-PRD-RAC-MGMT-2         252:11   0    50G  0 mpath 
+  └─DC-PRD-RAC-MGMT-2p1     252:18   0    50G  0 part  
+sdbn                         68:16   0   500G  0 disk  
+└─DC-PRD-RAC-FRA-4          252:43   0   500G  0 mpath 
+  └─DC-PRD-RAC-FRA-4p1      252:45   0   500G  0 part  
+sdcc                         69:0    0   500G  0 disk  
+└─DC-PRD-RAC-DATA-3         252:25   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-3p1     252:35   0   500G  0 part  
+sday                         67:32   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-1         252:16   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-1p1     252:24   0   500G  0 part  
+sdbo                         68:32   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-9         252:34   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-9p1     252:42   0   500G  0 part  
+sdcd                         69:16   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-4         252:27   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-4p1     252:37   0   500G  0 part  
+sdaz                         67:48   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-2         252:13   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-2p1     252:21   0   500G  0 part  
+sdce                         69:32   0   500G  0 disk  
+└─DC-PRD-RAC-FRA-3          252:29   0   500G  0 mpath 
+  └─DC-PRD-RAC-FRA-3p1      252:38   0   500G  0 part  
+sdbp                         68:48   0    20G  0 disk  
+└─DC-PRD-RAC-OCR-1          252:5    0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-1p1      252:7    0    20G  0 part  
+sdcf                         69:48   0   500G  0 disk  
+└─DC-PRD-RAC-BACKUP-3       252:46   0   500G  0 mpath 
+  └─vgracbackup-lvracbackup 252:47   0   1.5T  0 lvm   /backuprman1
+sdbq                         68:64   0    20G  0 disk  
+└─DC-PRD-RAC-OCR-2          252:10   0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-2p1      252:15   0    20G  0 part  
+sdcg                         69:64   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-6         252:30   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-6p1     252:39   0   500G  0 part  
+sdbr                         68:80   0    20G  0 disk  
+└─DC-PRD-RAC-OCR-3          252:6    0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-3p1      252:9    0    20G  0 part  
+sdch                         69:80   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-7         252:32   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-7p1     252:41   0   500G  0 part  
+sdbs                         68:96   0    50G  0 disk  
+└─DC-PRD-RAC-MGMT-1         252:8    0    50G  0 mpath 
+  └─DC-PRD-RAC-MGMT-1p1     252:12   0    50G  0 part  
+sdci                         69:96   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-8         252:40   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-8p1     252:44   0   500G  0 part  
+sdbt                         68:112  0    50G  0 disk  
+└─DC-PRD-RAC-MGMT-2         252:11   0    50G  0 mpath 
+  └─DC-PRD-RAC-MGMT-2p1     252:18   0    50G  0 part  
+sdcj                         69:112  0   500G  0 disk  
+└─DC-PRD-RAC-FRA-4          252:43   0   500G  0 mpath 
+  └─DC-PRD-RAC-FRA-4p1      252:45   0   500G  0 part  
+sdbu                         68:128  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-1         252:16   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-1p1     252:24   0   500G  0 part  
+sdck                         69:128  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-9         252:34   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-9p1     252:42   0   500G  0 part  
+sdbv                         68:144  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-2         252:13   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-2p1     252:21   0   500G  0 part  
+sdbw                         68:160  0   250G  0 disk  
+└─DC-PRD-RAC-FRA-1          252:19   0   250G  0 mpath 
+  └─DC-PRD-RAC-FRA-1p1      252:28   0   250G  0 part  
+sdbx                         68:176  0   250G  0 disk  
+└─DC-PRD-RAC-FRA-2          252:17   0   250G  0 mpath 
+  └─DC-PRD-RAC-FRA-2p1      252:26   0   250G  0 part  
+sdby                         68:192  0     1T  0 disk  
+└─DC-PRD-RAC-BACKUP-1       252:14   0     1T  0 mpath 
+  └─vgracbackup-lvracbackup 252:47   0   1.5T  0 lvm   /backuprman1
+sdbz                         68:208  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-5         252:20   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-5p1     252:31   0   500G  0 part
+  
+[root@dbprdmob1 ~]# lsblk
+NAME                       MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+sda                          8:0    0 446.6G  0 disk  
+├─sda1                       8:1    0   200M  0 part  /boot/efi
+├─sda2                       8:2    0   500M  0 part  /boot
+└─sda3                       8:3    0   446G  0 part  
+  ├─vg_ol00-lv_root        252:0    0   100G  0 lvm   /
+  ├─vg_ol00-lv_swap        252:1    0    16G  0 lvm   [SWAP]
+  ├─vg_ol00-lv_oracle_diag 252:2    0   100G  0 lvm   
+  ├─vg_ol00-lv_grid_diag   252:3    0   100G  0 lvm   
+  └─vg_ol00-lv_home        252:4    0    50G  0 lvm   /home
+sdb                          8:16   0    20G  0 disk  
+└─DC-PRD-RAC-OCR-1         252:6    0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-1p1     252:9    0    20G  0 part  
+sdc                          8:32   0    20G  0 disk  
+└─DC-PRD-RAC-OCR-2         252:5    0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-2p1     252:7    0    20G  0 part  
+sdd                          8:48   0    20G  0 disk  
+└─DC-PRD-RAC-OCR-3         252:10   0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-3p1     252:15   0    20G  0 part  
+sde                          8:64   0    50G  0 disk  
+└─DC-PRD-RAC-MGMT-1        252:8    0    50G  0 mpath 
+  └─DC-PRD-RAC-MGMT-1p1    252:11   0    50G  0 part  
+sdf                          8:80   0    50G  0 disk  
+└─DC-PRD-RAC-MGMT-2        252:12   0    50G  0 mpath 
+  └─DC-PRD-RAC-MGMT-2p1    252:19   0    50G  0 part  
+sdg                          8:96   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-1        252:13   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-1p1    252:21   0   500G  0 part  
+sdh                          8:112  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-2        252:14   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-2p1    252:24   0   500G  0 part  
+sdi                          8:128  0   250G  0 disk  
+└─DC-PRD-RAC-FRA-1         252:17   0   250G  0 mpath 
+  └─DC-PRD-RAC-FRA-1p1     252:27   0   250G  0 part  
+sdj                          8:144  0   250G  0 disk  
+└─DC-PRD-RAC-FRA-2         252:20   0   250G  0 mpath 
+  └─DC-PRD-RAC-FRA-2p1     252:32   0   250G  0 part  
+sdk                          8:160  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-5        252:16   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-5p1    252:26   0   500G  0 part  
+sdl                          8:176  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-6        252:18   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-6p1    252:30   0   500G  0 part  
+sdm                          8:192  0   100G  0 disk  
+└─DC-PRD-RAC-DB1-U01       252:22   0   100G  0 mpath 
+  └─DC-PRD-RAC-DB1-U01p1   252:33   0   100G  0 part  /u01
+sdn                          8:208  0     1T  0 disk  
+└─DC-PRD-RAC-EXPDB         252:23   0     1T  0 mpath 
+  └─DC-PRD-RAC-EXPDB1      252:35   0  1024G  0 part  
+sdo                          8:224  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-3        252:25   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-3p1    252:37   0   500G  0 part  
+sdp                          8:240  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-4        252:29   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-4p1    252:40   0   500G  0 part  
+sdq                         65:0    0   500G  0 disk  
+└─DC-PRD-RAC-FRA-3         252:28   0   500G  0 mpath 
+  └─DC-PRD-RAC-FRA-3p1     252:38   0   500G  0 part  
+sdr                         65:16   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-7        252:31   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-7p1    252:41   0   500G  0 part  
+sds                         65:32   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-8        252:36   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-8p1    252:43   0   500G  0 part  
+sdt                         65:48   0   500G  0 disk  
+└─DC-PRD-RAC-FRA-4         252:34   0   500G  0 mpath 
+  └─DC-PRD-RAC-FRA-4p1     252:42   0   500G  0 part  
+sdu                         65:64   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-9        252:39   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-9p1    252:44   0   500G  0 part  
+sdv                         65:80   0    20G  0 disk  
+└─DC-PRD-RAC-OCR-1         252:6    0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-1p1     252:9    0    20G  0 part  
+sdw                         65:96   0    20G  0 disk  
+└─DC-PRD-RAC-OCR-2         252:5    0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-2p1     252:7    0    20G  0 part  
+sdx                         65:112  0    20G  0 disk  
+└─DC-PRD-RAC-OCR-3         252:10   0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-3p1     252:15   0    20G  0 part  
+sdy                         65:128  0    50G  0 disk  
+└─DC-PRD-RAC-MGMT-1        252:8    0    50G  0 mpath 
+  └─DC-PRD-RAC-MGMT-1p1    252:11   0    50G  0 part  
+sdz                         65:144  0    50G  0 disk  
+└─DC-PRD-RAC-MGMT-2        252:12   0    50G  0 mpath 
+  └─DC-PRD-RAC-MGMT-2p1    252:19   0    50G  0 part  
+sr0                         11:0    1  1024M  0 rom   
+sdaa                        65:160  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-1        252:13   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-1p1    252:21   0   500G  0 part  
+sdab                        65:176  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-2        252:14   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-2p1    252:24   0   500G  0 part  
+sdac                        65:192  0   250G  0 disk  
+└─DC-PRD-RAC-FRA-1         252:17   0   250G  0 mpath 
+  └─DC-PRD-RAC-FRA-1p1     252:27   0   250G  0 part  
+sdad                        65:208  0   250G  0 disk  
+└─DC-PRD-RAC-FRA-2         252:20   0   250G  0 mpath 
+  └─DC-PRD-RAC-FRA-2p1     252:32   0   250G  0 part  
+sdae                        65:224  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-5        252:16   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-5p1    252:26   0   500G  0 part  
+sdaf                        65:240  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-6        252:18   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-6p1    252:30   0   500G  0 part  
+sdag                        66:0    0   100G  0 disk  
+└─DC-PRD-RAC-DB1-U01       252:22   0   100G  0 mpath 
+  └─DC-PRD-RAC-DB1-U01p1   252:33   0   100G  0 part  /u01
+sdah                        66:16   0     1T  0 disk  
+└─DC-PRD-RAC-EXPDB         252:23   0     1T  0 mpath 
+  └─DC-PRD-RAC-EXPDB1      252:35   0  1024G  0 part  
+sdai                        66:32   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-3        252:25   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-3p1    252:37   0   500G  0 part  
+sdaj                        66:48   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-4        252:29   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-4p1    252:40   0   500G  0 part  
+sdak                        66:64   0   500G  0 disk  
+└─DC-PRD-RAC-FRA-3         252:28   0   500G  0 mpath 
+  └─DC-PRD-RAC-FRA-3p1     252:38   0   500G  0 part  
+sdal                        66:80   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-7        252:31   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-7p1    252:41   0   500G  0 part  
+sdba                        67:64   0   100G  0 disk  
+└─DC-PRD-RAC-DB1-U01       252:22   0   100G  0 mpath 
+  └─DC-PRD-RAC-DB1-U01p1   252:33   0   100G  0 part  /u01
+sdam                        66:96   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-8        252:36   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-8p1    252:43   0   500G  0 part  
+sdbb                        67:80   0     1T  0 disk  
+└─DC-PRD-RAC-EXPDB         252:23   0     1T  0 mpath 
+  └─DC-PRD-RAC-EXPDB1      252:35   0  1024G  0 part  
+sdan                        66:112  0   500G  0 disk  
+└─DC-PRD-RAC-FRA-4         252:34   0   500G  0 mpath 
+  └─DC-PRD-RAC-FRA-4p1     252:42   0   500G  0 part  
+sdbc                        67:96   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-3        252:25   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-3p1    252:37   0   500G  0 part  
+sdao                        66:128  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-9        252:39   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-9p1    252:44   0   500G  0 part  
+sdbd                        67:112  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-4        252:29   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-4p1    252:40   0   500G  0 part  
+sdbe                        67:128  0   500G  0 disk  
+└─DC-PRD-RAC-FRA-3         252:28   0   500G  0 mpath 
+  └─DC-PRD-RAC-FRA-3p1     252:38   0   500G  0 part  
+sdap                        66:144  0    20G  0 disk  
+└─DC-PRD-RAC-OCR-1         252:6    0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-1p1     252:9    0    20G  0 part  
+sdbf                        67:144  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-7        252:31   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-7p1    252:41   0   500G  0 part  
+sdaq                        66:160  0    20G  0 disk  
+└─DC-PRD-RAC-OCR-2         252:5    0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-2p1     252:7    0    20G  0 part  
+sdbg                        67:160  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-8        252:36   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-8p1    252:43   0   500G  0 part  
+sdar                        66:176  0    20G  0 disk  
+└─DC-PRD-RAC-OCR-3         252:10   0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-3p1     252:15   0    20G  0 part  
+sdbh                        67:176  0   500G  0 disk  
+└─DC-PRD-RAC-FRA-4         252:34   0   500G  0 mpath 
+  └─DC-PRD-RAC-FRA-4p1     252:42   0   500G  0 part  
+sdas                        66:192  0    50G  0 disk  
+└─DC-PRD-RAC-MGMT-1        252:8    0    50G  0 mpath 
+  └─DC-PRD-RAC-MGMT-1p1    252:11   0    50G  0 part  
+sdbi                        67:192  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-9        252:39   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-9p1    252:44   0   500G  0 part  
+sdat                        66:208  0    50G  0 disk  
+└─DC-PRD-RAC-MGMT-2        252:12   0    50G  0 mpath 
+  └─DC-PRD-RAC-MGMT-2p1    252:19   0    50G  0 part  
+sdbj                        67:208  0    20G  0 disk  
+└─DC-PRD-RAC-OCR-1         252:6    0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-1p1     252:9    0    20G  0 part  
+sdau                        66:224  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-1        252:13   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-1p1    252:21   0   500G  0 part  
+sdbk                        67:224  0    20G  0 disk  
+└─DC-PRD-RAC-OCR-2         252:5    0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-2p1     252:7    0    20G  0 part  
+sdav                        66:240  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-2        252:14   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-2p1    252:24   0   500G  0 part  
+sdbl                        67:240  0    20G  0 disk  
+└─DC-PRD-RAC-OCR-3         252:10   0    20G  0 mpath 
+  └─DC-PRD-RAC-OCR-3p1     252:15   0    20G  0 part  
+sdca                        68:224  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-8        252:36   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-8p1    252:43   0   500G  0 part  
+sdaw                        67:0    0   250G  0 disk  
+└─DC-PRD-RAC-FRA-1         252:17   0   250G  0 mpath 
+  └─DC-PRD-RAC-FRA-1p1     252:27   0   250G  0 part  
+sdbm                        68:0    0    50G  0 disk  
+└─DC-PRD-RAC-MGMT-1        252:8    0    50G  0 mpath 
+  └─DC-PRD-RAC-MGMT-1p1    252:11   0    50G  0 part  
+sdcb                        68:240  0   500G  0 disk  
+└─DC-PRD-RAC-FRA-4         252:34   0   500G  0 mpath 
+  └─DC-PRD-RAC-FRA-4p1     252:42   0   500G  0 part  
+sdax                        67:16   0   250G  0 disk  
+└─DC-PRD-RAC-FRA-2         252:20   0   250G  0 mpath 
+  └─DC-PRD-RAC-FRA-2p1     252:32   0   250G  0 part  
+sdbn                        68:16   0    50G  0 disk  
+└─DC-PRD-RAC-MGMT-2        252:12   0    50G  0 mpath 
+  └─DC-PRD-RAC-MGMT-2p1    252:19   0    50G  0 part  
+sdcc                        69:0    0   500G  0 disk  
+└─DC-PRD-RAC-DATA-9        252:39   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-9p1    252:44   0   500G  0 part  
+sday                        67:32   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-5        252:16   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-5p1    252:26   0   500G  0 part  
+sdbo                        68:32   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-1        252:13   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-1p1    252:21   0   500G  0 part  
+sdaz                        67:48   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-6        252:18   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-6p1    252:30   0   500G  0 part  
+sdbp                        68:48   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-2        252:14   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-2p1    252:24   0   500G  0 part  
+sdbq                        68:64   0   250G  0 disk  
+└─DC-PRD-RAC-FRA-1         252:17   0   250G  0 mpath 
+  └─DC-PRD-RAC-FRA-1p1     252:27   0   250G  0 part  
+sdbr                        68:80   0   250G  0 disk  
+└─DC-PRD-RAC-FRA-2         252:20   0   250G  0 mpath 
+  └─DC-PRD-RAC-FRA-2p1     252:32   0   250G  0 part  
+sdbs                        68:96   0   500G  0 disk  
+└─DC-PRD-RAC-DATA-5        252:16   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-5p1    252:26   0   500G  0 part  
+sdbt                        68:112  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-6        252:18   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-6p1    252:30   0   500G  0 part  
+sdbu                        68:128  0   100G  0 disk  
+└─DC-PRD-RAC-DB1-U01       252:22   0   100G  0 mpath 
+  └─DC-PRD-RAC-DB1-U01p1   252:33   0   100G  0 part  /u01
+sdbv                        68:144  0     1T  0 disk  
+└─DC-PRD-RAC-EXPDB         252:23   0     1T  0 mpath 
+  └─DC-PRD-RAC-EXPDB1      252:35   0  1024G  0 part  
+sdbw                        68:160  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-3        252:25   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-3p1    252:37   0   500G  0 part  
+sdbx                        68:176  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-4        252:29   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-4p1    252:40   0   500G  0 part  
+sdby                        68:192  0   500G  0 disk  
+└─DC-PRD-RAC-FRA-3         252:28   0   500G  0 mpath 
+  └─DC-PRD-RAC-FRA-3p1     252:38   0   500G  0 part  
+sdbz                        68:208  0   500G  0 disk  
+└─DC-PRD-RAC-DATA-7        252:31   0   500G  0 mpath 
+  └─DC-PRD-RAC-DATA-7p1    252:41   0   500G  0 part
+
+
+node 2
+DISKGROUP	 ASMDISK	  MOUNT_S STATE    FAILGROUP
+---------------- ---------------- ------- -------- ----------------
+DATA		 DATA03 	  CACHED  NORMAL   DATA03
+DATA		 DATA05 	  CACHED  NORMAL   DATA05
+DATA		 DATA07 	  CACHED  NORMAL   DATA07
+DATA		 DATA06 	  CACHED  NORMAL   DATA06
+DATA		 DATA09 	  CACHED  NORMAL   DATA09
+DATA		 DATA02 	  CACHED  NORMAL   DATA02
+DATA		 DATA01 	  CACHED  NORMAL   DATA01
+DATA		 DATA08 	  CACHED  NORMAL   DATA08
+DATA		 DATA04 	  CACHED  NORMAL   DATA04
+FRA		 FRA04		  CACHED  NORMAL   FRA04
+FRA		 FRA02		  CACHED  NORMAL   FRA02
+FRA		 FRA01		  CACHED  NORMAL   FRA01
+FRA		 FRA03		  CACHED  NORMAL   FRA03
+MGMT		 MGMT01 	  CACHED  NORMAL   MGMT01
+MGMT		 MGMT02 	  CACHED  NORMAL   MGMT02
+OCR		 OCR02		  CACHED  NORMAL   OCR02
+OCR		 OCR03		  CACHED  NORMAL   OCR03
+OCR		 OCR01		  CACHED  NORMAL   OCR01
+
+
+node 1
+DISKGROUP  ASMDISK    MOUNT_S STATE    FAILGROUP
+---------- ---------- ------- -------- ----------
+OCR	   OCR02      CACHED  NORMAL   OCR02
+OCR	   OCR01      CACHED  NORMAL   OCR01
+MGMT	   MGMT01     CACHED  NORMAL   MGMT01
+OCR	   OCR03      CACHED  NORMAL   OCR03
+MGMT	   MGMT02     CACHED  NORMAL   MGMT02
+DATA	   DATA01     CACHED  NORMAL   DATA01
+DATA	   DATA05     CACHED  NORMAL   DATA05
+DATA	   DATA02     CACHED  NORMAL   DATA02
+FRA	   FRA01      CACHED  NORMAL   FRA01
+DATA	   DATA06     CACHED  NORMAL   DATA06
+FRA	   FRA02      CACHED  NORMAL   FRA02
+DATA	   DATA03     CACHED  NORMAL   DATA03
+FRA	   FRA03      CACHED  NORMAL   FRA03
+DATA	   DATA04     CACHED  NORMAL   DATA04
+DATA	   DATA07     CACHED  NORMAL   DATA07
+FRA	   FRA04      CACHED  NORMAL   FRA04
+DATA	   DATA08     CACHED  NORMAL   DATA08
+DATA	   DATA09     CACHED  NORMAL   DATA09
+
+
+[grid@dbprdmob1 ~]$ /u01/app/12.2.0.1/grid/bin/asmcmd afd_lsdsk
+--------------------------------------------------------------------------------
+Label                     Filtering   Path
+================================================================================
+DATA01                      ENABLED   /dev/mapper/DC-PRD-RAC-DATA-1p1
+DATA02                      ENABLED   /dev/mapper/DC-PRD-RAC-DATA-2p1
+DATA03                      ENABLED   /dev/mapper/DC-PRD-RAC-DATA-3p1
+DATA04                      ENABLED   /dev/mapper/DC-PRD-RAC-DATA-4p1
+DATA05                      ENABLED   /dev/mapper/DC-PRD-RAC-DATA-5p1
+DATA06                      ENABLED   /dev/mapper/DC-PRD-RAC-DATA-6p1
+DATA07                      ENABLED   /dev/mapper/DC-PRD-RAC-DATA-7p1
+DATA08                      ENABLED   /dev/mapper/DC-PRD-RAC-DATA-8p1
+DATA09                      ENABLED   /dev/mapper/DC-PRD-RAC-DATA-9p1
+FRA01                       ENABLED   /dev/mapper/DC-PRD-RAC-FRA-1p1
+FRA02                       ENABLED   /dev/mapper/DC-PRD-RAC-FRA-2p1
+FRA03                       ENABLED   /dev/mapper/DC-PRD-RAC-FRA-3p1
+FRA04                       ENABLED   /dev/mapper/DC-PRD-RAC-FRA-4p1
+MGMT01                      ENABLED   /dev/mapper/DC-PRD-RAC-MGMT-1p1
+MGMT02                      ENABLED   /dev/mapper/DC-PRD-RAC-MGMT-2p1
+OCR01                       ENABLED   /dev/mapper/DC-PRD-RAC-OCR-1p1
+OCR02                       ENABLED   /dev/mapper/DC-PRD-RAC-OCR-2p1
+OCR03                       ENABLED   /dev/mapper/DC-PRD-RAC-OCR-3p1
+
+
+Label                     Filtering   Path
+================================================================================
+DATA01                      ENABLED   /dev/mapper/DC-PRD-RAC-DATA-1p1
+DATA02                      ENABLED   /dev/mapper/DC-PRD-RAC-DATA-2p1
+DATA03                      ENABLED   /dev/mapper/DC-PRD-RAC-DATA-3p1
+DATA04                      ENABLED   /dev/mapper/DC-PRD-RAC-DATA-4p1
+DATA05                      ENABLED   /dev/mapper/DC-PRD-RAC-DATA-5p1
+DATA06                      ENABLED   /dev/mapper/DC-PRD-RAC-DATA-6p1
+DATA07                      ENABLED   /dev/mapper/DC-PRD-RAC-DATA-7p1
+DATA08                      ENABLED   /dev/mapper/DC-PRD-RAC-DATA-8p1
+DATA09                      ENABLED   /dev/mapper/DC-PRD-RAC-DATA-9p1
+FRA01                       ENABLED   /dev/mapper/DC-PRD-RAC-FRA-1p1
+FRA02                       ENABLED   /dev/mapper/DC-PRD-RAC-FRA-2p1
+FRA03                       ENABLED   /dev/mapper/DC-PRD-RAC-FRA-3p1
+FRA04                       ENABLED   /dev/mapper/DC-PRD-RAC-FRA-4p1
+MGMT01                      ENABLED   /dev/mapper/DC-PRD-RAC-MGMT-1p1
+MGMT02                      ENABLED   /dev/mapper/DC-PRD-RAC-MGMT-2p1
+OCR01                       ENABLED   /dev/mapper/DC-PRD-RAC-OCR-1p1
+OCR02                       ENABLED   /dev/mapper/DC-PRD-RAC-OCR-2p1
+OCR03                       ENABLED   /dev/mapper/DC-PRD-RAC-OCR-3p1

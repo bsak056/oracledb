@@ -1,0 +1,6 @@
+doi port listener
+
+su - grid
+$ srvctl modify scan_listener -p <new_scan_listener_port>
+$ srvctl stop scan_listener
+$ srvctl start scan_listener

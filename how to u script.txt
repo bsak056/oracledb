@@ -1,0 +1,3 @@
+script + name file
+after doing everything u want 
+final exit to keep information 

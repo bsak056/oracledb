@@ -1,0 +1,105 @@
+final data guard 
+SERVICE_NAME = unique name
+
+listener stby
+SID_LIST_LISTENER =
+  (SID_LIST =
+    (SID_DESC =
+      (GLOBAL_DBNAME = teststb)
+      (ORACLE_HOME = /u01/app/oracle/product/19.0.0/dbhome_1)
+      (SID_NAME = testdbdr)
+    )
+  )
+
+stby 
+ALTER SYSTEM SET LOG_ARCHIVE_CONFIG='DG_CONFIG=(testdb,teststb)';
+ALTER SYSTEM SET LOG_ARCHIVE_DEST_2='SERVICE=TESTSTB NOAFFIRM ASYNC VALID_FOR=(ONLINE_LOGFILES,PRIMARY_ROLE) DB_UNIQUE_NAME=teststb';
+alter system set log_archive_dest_2='service=TESTSTB noaffirm async valid_for=(online_logfiles,primary_role) db_unique_name=teststb';
+alter system set log_archive_dest_2='service=TESTSTB noaffrim async valid_for=(online_logfiles,primary_role) db_unique_name=teststb';
+ALTER SYSTEM SET LOG_ARCHIVE_DEST_STATE_2=ENABLE;
+
+log_archive_dest_2   string   SERVICE=PRIM NOAFFIRM ASYNC VALID_FOR=(ONLINE_LOGFILES,PRIMARY_ROLE) DB_UNIQUE_NAME=orcl
+log_archive_config   string   DG_CONFIG=(orcl,orclsb)
+
+prim 
+ALTER SYSTEM SET log_archive_config='dg_config=(testdb,teststb)';
+ALTER SYSTEM SET LOG_ARCHIVE_DEST_2='SERVICE=TESTDB NOAFFIRM ASYNC VALID_FOR=(ONLINE_LOGFILES,PRIMARY_ROLE) DB_UNIQUE_NAME=testdb';
+
+log_archive_dest_2   string   SERVICE=STBY NOAFFIRM ASYNC VALID_FOR=(ONLINE_LOGFILES,PRIMARY_ROLE) DB_UNIQUE_NAME=orclsb
+log_archive_config   string   DG_CONFIG=(orcl,orclsb)
+
+
+ALTER DATABASE ADD STANDBY LOGFILE THREAD 1 GROUP 19 ('/u01/app/oracle/oradata/TESTDB/standby_redo08.log') SIZE 1G;
+
+ALTER SYSTEM SET DB_FILE_NAME_CONVERT='/u01/app/oracle/oradata/TESTDB/','/u01/app/oracle/oradata/TESTDB/' SCOPE=SPFILE;
+ALTER SYSTEM SET LOG_FILE_NAME_CONVERT='/u01/app/oracle/oradata/TESTDB/','/u01/app/oracle/oradata/TESTDB/'  SCOPE=SPFILE;
+ALTER SYSTEM SET STANDBY_FILE_MANAGEMENT=AUTO;
+
+ALTER DATABASE ADD LOGFILE THREAD 1 GROUP 1 ('/u01/app/oracle/oradata/TESTDB/redo01.log') SIZE 200M;
+ALTER DATABASE ADD LOGFILE THREAD 1 GROUP 2 ('/u01/app/oracle/oradata/TESTDB/redo02.log') SIZE 200M;
+
+select max(sequence#) from v$thread;
+
+start MRP at stby
+alter database recover managed standby database disconnect from session;
+
+switch logfile at primart database at prim
+alter system switch logfile;
+
+check again 
+select max(sequence#) from v$thread;
+
+if sill # thread;
+alter database recover managed standby database cancel;
+alter database recover managed standby database disconnect from session;
+
+https://logic.edchen.org/how-to-resolve-the-listener-supports-no-services/ if listener-supports-no-services/
+
+ALTER DATABASE CREATE STANDBY CONTROLFILE AS '/u01/stby.ctl';
+ALTER SYSTEM SET STANDBY_FILE_MANAGEMENT='AUTO';
+ALTER SYSTEM SET STANDBY_FILE_MANAGEMENT='MANUAL';
+
+alter database drop logfile group 1;
+alter database clear logfile group 1;
+
+alter system set service_names='testdb' scope=both;
+alter system set service_names='dba.domain.com' scope=spfile;
+chu thich 
+
+DB_FILE_NAME_CONVERT la tham so chi duong dan chuyen doi du lieu con chính thành tệp dữ liệu dự phòng
+LOG_FILE_NAME_CONVERT
+LOG_ARCHIVE_CONFIG chuyen file redo logs tu con chinh sang con phu bang ten unique name
+
+https://www.carajandb.com/en/blog/2015/dataguard-protection-modes-en/
+
+
+alter system set log_archive_dest_2='service=TESTDBDR noaffirm async valid_for=(online_logfiles,primary_role) db_unique_name=teststb
+
+ALTER SYSTEM SET LOG_ARCHIVE_DEST_2='SERVICE=TESTDBDR NOAFFIRM ASYNC VALID_FOR=(ONLINE_LOGFILES,PRIMARY_ROLE) DB_UNIQUE_NAME=teststb';
+
+
+create
+
+backup database include current controlfile plus archivelog;
+
+very_area/TESTDB/autobackup/2023_09_04/o1_mf_s_1146689564_lhcr9fcq_.bkp comment=NONE
+
+
+restore standby controlfile from '/u01/app/oracle/fast_recovery_area/TESTDB/backupset/2023_09_04/o1_mf_annnn_TAG20230904T210755_lhcs5vhl_.bkp';
+restore standby controlfile from '/u01/app/oracle/fast_recovery_area/TESTDB/backupset/2023_09_04/o1_mf_annnn_TAG20230904T210859_lhcs7vry_.bkp';
+restore standby controlfile from '/u01/app/oracle/fast_recovery_area/TESTDB/backupset/2023_09_04/o1_mf_ncnnf_TAG20230904T210759_lhcs7t61_.bkp';
+restore standby controlfile from '/u01/app/oracle/fast_recovery_area/TESTDB/backupset/2023_09_04/o1_mf_nnndf_TAG20230904T205158_lhcr7z46_.bkp';
+restore standby controlfile from '/u01/app/oracle/fast_recovery_area/TESTDB/backupset/2023_09_04/o1_mf_nnndf_TAG20230904T210759_lhcs5zws_.bkp';
+
+alter system set log_archive_dest_2='service=DBASM noaffirm async valid_for=(online_logfiles,primary_role) db_unique_name=dbasm';
+
+
+
+auxiliary sys/1@TESTDBDRDR
+
+
+srvctl add
+
+
+monitor DG
+select process, status, thread#, sequence#, block#, blocks from v$managed_standby;

@@ -1,0 +1,1 @@
+srvctl add database -d dbfssb -role PHYSICAL_STANDBY -diskgroup "DATA01,DATA02" -spfile $ORACLE_HOME/dbs/spfile$ORACLE_SID.ora -pwfile $ORACLE_HOME/dbs/orapwd$ORACLE_SID -dbname dbfs -o $ORACLE_HOME

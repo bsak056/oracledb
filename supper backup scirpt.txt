@@ -1,0 +1,93 @@
+backuplevel0.sh
+
+#!/bin/bash
+#su - oracle
+######KSW&TMH###########
+echo -e "\033[33m!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\e[0m"
+echo -e "\033[31m!!! Don't Closed Terminal !!!CTRL+C!!!\e[0m"
+echo -e "\033[33m!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\e[0m"
+
+for ((i=0;i<10;i++)); do
+   printf "\r RUNNING!!!!!!!!!!!!!Don't Close!!!!!!!!!!!!!!!!!"
+   sleep 0.5
+   printf "\r RUNNING........................................."
+   sleep 0.5
+   printf "\r RUNNING!!!!!!!!!!!!!Don't Close!!!!!!!!!!!!!!!!!"
+   sleep 0.5
+   printf "\r RUNNING........................................."
+   sleep 0.5
+   printf "\r RUNNING!!!!!!!!!!!!!Don't Close!!!!!!!!!!!!!!!!!"
+   sleep 0.5
+   printf "\r RUNNING........................................."
+   sleep 0.5
+   printf "\r RUNNING!!!!!!!!!!!!!Don't Close!!!!!!!!!!!!!!!!!"
+   sleep 0.5
+   printf "\r RUNNING........................................."
+   sleep 0.5
+done
+
+########KSW&TMH####################
+
+logfile=`date +%Y%m%d`_level0.log
+export logfile
+date_rman=`date +%Y%m%d`
+export date_rman
+backup_base=/backuprman1/rman
+export backup_base
+level=0
+export level
+script_dir=/home/oracle/scripts
+export script_dir
+mkdir -p $backup_base/level$level/$date_rman
+export ORACLE_SID=mobcore1
+export NLS_DATE_FORMAT="yyyy-mm-dd hh24:mi:ss"
+export ORACLE_HOME=/u01/app/oracle/product/12.2.0.1/db_1
+export PATH=$ORACLE_HOME/bin:$PATH
+export scn=`sqlplus -s / as sysdba << EOF
+set heading off feedback off verify off
+column current_scn format 99999999999999999999
+select current_scn from v\\$database;
+exit
+EOF`
+echo $scn > $backup_base/level$level/$date_rman/scn_before_backup.txt
+rman target / nocatalog cmdfile $script_dir/backuplevel$level.rman log $backup_base/level$level/$date_rman/$logfile using $scn << EOS
+exit;
+EOS
+#######KSW&TMH#######
+
+echo " "
+echo -e "\033[32m __ \   _ \   \  | ____|
+ |   | |   |   \ | __|
+ |   | |   | |\  | |
+____/ \___/ _| \_|_____|\e[0m "
+
+echo " "
+
+echo -e "\033[33m=================================\e[0m"
+echo -e "\033[31m+++++>>>>>TOTAL SIZE<<<<<++++\e[0m"
+echo -e "\033[33m=================================\e[0m"
+echo " "
+du -csh $backup_base/level$level/$date_rman
+echo " "
+echo -e "\033[33m=================================\e[0m"
+
+backuplevel0.rman
+
+run {
+crosscheck archivelog all;
+delete noprompt expired archivelog all;
+crosscheck backup;
+delete force noprompt expired backupset;
+backup as compressed backupset incremental level 0 database tag 'level0' filesperset 20 section size 40G format '$backup_base/level$level/$date_rman/mobcore_db_%T_s%s_p%p.bkp';
+sql 'alter system archive log current';
+backup as compressed backupset archivelog from scn &1 tag 'arch' filesperset 10 format '$backup_base/level$level/$date_rman/mobcore_arc_%T_s%s_p%p.bkp';
+backup as compressed backupset current controlfile tag 'ctlfile' format '$backup_base/level$level/$date_rman/mobcore_controlfile_%T_s%s_p%p.bkp';
+delete archivelog until time 'sysdate-10';
+crosscheck backup;
+delete noprompt obsolete;
+delete force noprompt expired backup of database;
+delete force noprompt expired backup of archivelog all;
+}
+
+
+have not

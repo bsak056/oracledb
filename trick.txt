@@ -1,0 +1,3 @@
+trick fast write 
+examine
+select 'set newname for tempfile '||file#||' to '''||name||''';' from v$datafile;

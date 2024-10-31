@@ -1,0 +1,41 @@
+switchover DG
+
+Steps:
+
+1. Verify if primary can be switched over to standby
+
+SQL> select switchover_status from v$database;
+
+If value returns “TO_STANDBY”, its alright to switch the primary to standby role.
+
+2. Convert primary to standby
+
+SQL> alter database commit to switchover to physical standby;
+
+If value is “SESSIONS ACTIVE” from step 1, then
+
+SQL> alter database commit to switchover to physical standby with session shutdown;
+
+3. Shutdown & restart the old primary as standby
+
+SQL> shutdown immediate;
+
+SQL> startup nomount;
+
+At this point, we now have both databases as standby.
+
+4. On target standby database, verify switchover status. If value is “TO_PRIMARY” then
+
+SQL> alter database commit to switchover to primary;
+
+If value is “SESSIONS ACTIVE”, then append “WITH SESSION SHUTDOWN” to above command.
+
+5. Shutdown and restart the new primary database
+
+SQL> shutdown immediate;startup;
+
+6. start recover on new standby database (old primary)
+
+SQL > alter database mount standby database
+
+SQL > alter database recover managed standby database using current logfile disconnect;

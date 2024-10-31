@@ -1,0 +1,10 @@
+echo fomart - lsblk 
+ls -Ll /dev/rdsk/*s0
+
+groupadd
+projadd group.dba
+project -l group.dba
+
+useradd -u number -g install -G 
+
+projmod -sK

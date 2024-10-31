@@ -1,0 +1,82 @@
+install data guard
+Step1:-Change Archivelog mode and force logging mode
+
+[oracle@dev19c ~]$ export ORACLE_SID=chennai
+[oracle@dev19c ~]$ sqlplus / as sysdba
+
+SQL> startup mount
+
+SQL> alter database archivelog;
+Database altered.
+
+SQL> ALTER DATABASE FORCE LOGGING;
+Database altered.
+
+SQL> alter database open;
+Database altered.
+
+SQL> select FORCE_LOGGING,log_mode from v$database;
+
+FORCE_LOGGING           LOG_MODE
+————————————— ————
+YES                                      ARCHIVELOG
+
+Step2:-Adding Redologfile for standby database
+
+SQL> alter database add standby logfile group 4 ‘/u01/app/oracle/oradata/CHENNAI/redo04.log’ size 50m;
+Database altered.
+
+SQL> alter database add standby logfile group 5 ‘/u01/app/oracle/oradata/CHENNAI/redo05.log’ size 50m;
+Database altered.
+
+SQL> alter database add standby logfile group 6 ‘/u01/app/oracle/oradata/CHENNAI/redo06.log’ size 50m;
+Database altered.
+
+SQL> SELECT GROUP#,THREAD#,SEQUENCE#,ARCHIVED,STATUS FROM V$STANDBY_LOG;
+
+GROUP# THREAD# SEQUENCE# ARC STATUS
+———- ———- ———- — ———-
+4 0 0 YES UNASSIGNED
+5 0 0 YES UNASSIGNED
+6 0 0 YES UNASSIGNED
+
+Step3:-Adding the network entry in primary and standby side(Both servers)
+
+Tnsnames entry:-
+**************
+chennai =
+(DESCRIPTION =
+(ADDRESS_LIST =
+(ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.125.155)(PORT = 1521))
+)
+(CONNECT_DATA =
+(SERVER = DEDICATED)
+(SERVICE_NAME = chennai)
+)
+)
+
+delhi =
+(DESCRIPTION =
+(ADDRESS_LIST =
+(ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.125.156)(PORT = 1521))
+)
+(CONNECT_DATA =
+(SERVICE_NAME = delhi)
+)
+)
+
+Listener Entry:-
+************
+SID_LIST_LISTENER =
+(SID_LIST =
+(SID_DESC =
+(GLOBAL_DBNAME = chennai)
+(ORACLE_HOME = /u01/app/oracle/product/19.3.0/db_1/)
+(SID_NAME = chennai)
+)
+(SID_DESC =
+(GLOBAL_DBNAME = delhi)
+(ORACLE_HOME = /u01/app/oracle/product/19.3.0/db_1/)
+(SID_NAME = delhi)
+)
+)

@@ -1,0 +1,3 @@
+health check HC if have PDB
+
+alter session set

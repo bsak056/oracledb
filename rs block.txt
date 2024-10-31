@@ -1,0 +1,3 @@
+restore block
+
+https://www.tranvanbinh.vn/2018/08/troubleshooting-corrupt-block-oracle.html

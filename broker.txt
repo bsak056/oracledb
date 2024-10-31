@@ -1,0 +1,13 @@
+broker DG 
+
+
+
+run
+{
+allocate channel p1 type disk;
+allocate channel p2 type disk;
+allocate channel p3 type disk;
+allocate channel p4 type disk;
+allocate auxiliary channel s1 type disk;
+duplicate target database for standby from active database nofilenamecheck;
+}

@@ -1,0 +1,94 @@
+main: SID prim
+stby SID prim
+
+setting listener prim
+
+LISTENER =
+  (DESCRIPTION_LIST =
+    (DESCRIPTION =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = prim)(PORT = 1521))
+      (ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC1521))
+    )
+  )
+
+SID_LIST_LISTENER =
+  (SID_LIST =
+    (SID_DESC =
+      (GLOBAL_DBNAME = prim)
+      (ORACLE_HOME = /u01/app/oracle/product/19c/dbhome_1)
+      (SID_NAME = prim)
+      (ENVS="TNS_ADMIN=/u01/app/oracle/product/19c/dbhome_1/network/admin")
+    )
+  )
+
+ADR_BASE_LISTENER = /u01/app/oracle
+
+setting tnsnames prim
+PRIM =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = prim.localdomain)(PORT = 1521))
+    )
+    (CONNECT_DATA =
+      (SID = prim)
+    )
+  )
+
+STBY =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = stby.localdomain)(PORT = 1521))
+    )
+    (CONNECT_DATA =
+      (SID = prim)
+    )
+  )
+
+setting listener stby
+
+LISTENER =
+  (DESCRIPTION_LIST =
+    (DESCRIPTION =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = stby.localdomain)(PORT = 1521))
+      (ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC1521))
+    )
+  )
+
+SID_LIST_LISTENER =
+  (SID_LIST =
+    (SID_DESC =
+      (GLOBAL_DBNAME = stby)
+      (ORACLE_HOME = /u01/app/oracle/product/19c/dbhome_1)
+      (SID_NAME = prim)
+      (ENVS="TNS_ADMIN=/u01/app/oracle/product/19c/dbhome_1/network/admin")
+    )
+  )
+
+ADR_BASE_LISTENER = /u01/app/oracle
+
+setting tnsnames stby
+
+prim =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = prim.localdomain)(PORT = 1521))
+    )
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = prim)
+    )
+  )
+
+stby =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = stby.localdomain)(PORT = 1521))
+    )
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = stby)
+    )
+  )
+
+
+

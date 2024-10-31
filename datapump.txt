@@ -1,0 +1,96 @@
+datapump
+
+CREATE DIRECTORY export_dir AS '/u01/app/oracle/export';
+
+check directory Select * from dba_directories;
+
+Export toàn bộ database
+expdp "'/ as sysdba'" directory=export_dir dumpfile=export_full_db.dmp logfile=export_full_db.log full=y
+Trong đó:
+
+directory: Tên directory vừa tạo ở bước trên
+dumpfile: Tên dump file chứa các dữ liệu sẽ export
+logfile: Tên file nhật ký ghi lại quá trình export
+full=y: Export toàn bộ dữ liệu của database
+Export schema
+expdp "'/ as sysdba'" directory=export_dir dumpfile=export_schema.dmp logfile=export_schema.log schemas=SOE
+
+schemas: Tên các schema bạn muốn export dữ liệu. Bạn có thể export nhiều schema 1 lúc, tên schema cách nhau bởi dấu phẩy. VD: schemas=SOE,SCOTT
+Export table
+expdp "'/ as sysdba'" directory=export_dir dumpfile=export_tables.dmp logfile=export_tables.log tables=SOE.CUSTOMERS,SOE.ORDERS
+
+Export metadata only
+Bạn có thể chỉ export dữ liệu cấu trúc, các procedure, function của database với option content=metadata_only
+
+expdp "'/ as sysdba'" directory=export_dir dumpfile=export_tables_metadata.dmp logfile=export_tables_metadata.log tables=SOE.CUSTOMERS,SOE.ORDERS content=metadata_only
+Bạn cũng làm tương tự nếu chỉ muốn export data, không bao gồm metadata
+
+expdp "'/ as sysdba'" directory=export_dir dumpfile=export_tables_data.dmp logfile=export_tables_data.log tables=SOE.CUSTOMERS,SOE.ORDERS content=data_only
+
+
+Import dữ liệu
+Nếu bạn import full database, bao gồm cả các schema như SYS, SYSTEM, bạn có thể gặp rất nhiều lỗi, do conflict với nhiều bảng hệ thống.
+
+Do đó, bạn nên tránh import full database hoặc full schema SYS, SYSTEM.
+
+Sau khi đã export xong, bạn copy hoặc chuyển các dump file sang hệ thống chứa database đích, nơi mà bạn muốn import dữ liệu vào.
+
+Bạn cũng cần tạo 1 directory để lưu các dump file này
+
+Tạo directory
+mkdir /u01/app/oracle/import
+sqlplus / as sysdba
+CREATE DIRECTORY import_dir AS '/u01/app/oracle/import';
+Import schema
+impdp "'/ as sysdba'" directory=import_dir dumpfile=export_schema.dmp logfile=import_schema.log schemas=SOE,SCOTT
+Bạn có thể đổi tên schema trong quá trình import với option remap_schema như sau:
+
+impdp "'/ as sysdba'" directory=import_dir dumpfile=export_schema.dmp logfile=import_schema.log schemas=SOE,SCOTT remap_schema=SOE:SOE_NEW
+trong đó, SOE_NEW là tên schema mới mà bạn muốn
+
+Import table
+impdp "'/ as sysdba'" directory=import_dir dumpfile=export_tables.dmp logfile=import_tables.log tables=SOE.CUSTOMERS,SOE.ORDERS
+Nếu đã có table trên database đích, bạn có thể thêm option table_exists_action=replace để ghi đè lên các đối tượng đã có.
+
+impdp "'/ as sysdba'" directory=import_dir dumpfile=export_tables.dmp logfile=import_tables.log tables=SOE.CUSTOMERS,SOE.ORDERS table_exists_action=replace
+Bạn cũng có thể đổi tên tables trong quá trình import với option remap_tables như sau:
+
+impdp "'/ as sysdba'" directory=import_dir dumpfile=export_tables.dmp logfile=import_tables.log tables=SOE.CUSTOMERS,SOE.ORDERS remap_table=SOE.CUSTOMERS:SOE.CUST_NEW
+
+
+https://www.tranvanbinh.vn/2021/10/migrate-va-upgrade-oracle-11gr2.html
+
+
+Export Source database:
+
+Export Source Database sử dụng expdp:-
+Step 1 : Check kích thước ước lượng của Dumpfile:-
+
+Đảm bảo dung lượng trống lớn hơn kích thước ước tính trong thư mục export :
+
+$ expdp directory=MOM_DIR full=Y nologfile=Y estimate_only=Y
+
+Step 2 :Export Roles & Privileges:-
+
+$ expdp directory=MOM_DIR dumpfile=WINDOWS_LINUX_ROLES.DMP logfile=WINDOWS_LINUX_ROLES.log full=Y INCLUDE=USER,ROLE,ROLE_GRANT,PROFILE
+
+Step 3 :Export full database  và ngoại trừ default schema để giảm thời gian export với tham số “EXCLUDE”:-
+
+$ expdp directory=MOM_DIR dumpfile=EXP_WINDOWS_LINUX_FULL.DMP logfile=EXP_WINDOWS_LINUX_FULL.log full=Y EXCLUDE=SCHEMA:\”IN \(\’ANONYMOUS\’, \’APEX_030200\’, \’APEX_PUBLIC_USER\’, \’APPQOSSYS\’, \’CTXSYS\’, \’DBSNMP\’, \’DIP\’, \’EXFSYS\’, \’FLOWS_FILES\’, \’MDDATA\’, \’MDSYS\’, \’MGMT_VIEW\’, \’OLAPSYS\’, \’ORACLE_OCM\’, \’ORDDATA\’, \’ORDPLUGINS\’, \’ORDSYS\’, \’OUTLN\’, \’OWBSYS\’, \’OWBSYS_AUDIT\’, \’SCOTT\’, \’SI_INFORMTN_SCHEMA\’, \’SPATIAL_CSW_ADMIN_USR\’, \’SPATIAL_WFS_ADMIN_USR\’, \’SYS\’, \’SYSMAN\’, \’SYSTEM\’, \’WMSYS\’, \’XDB\’, \’XS$NULL\’\)\”
+
+Khi export được hoàn tất hãy kiểm tra log file và đảm bảo không có lỗi nào xuất hiện trong log file và sau đó chuyển dumpfile tới target server.
+
+Step 1 : Import Roles & Privileges:-
+
+$ impdp directory=DPDUMP dumpfile=WINDOWS_LINUX_ROLES.DMP logfile=WINDOWS_LINUX_ROLES.log full=Y
+
+Step 2 :Import vào database:-
+
+$ impdp directory=DPDUMP dumpfile=EXP_WINDOWS_LINUX_FULL.DMP logfile=IMP_WINDOWS_LINUX_FULL.log full=Y
+
+Sau khi import xong, hãy xem lại log file ký xem có lỗi nào không.
+
+Step 1 : Compile Invalid Objects trongTARGET:-
+
+SQL> @?/rdbms/admin/utlrp.sql
+

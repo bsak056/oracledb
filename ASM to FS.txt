@@ -1,0 +1,110 @@
+check location of files 
+select substr(member,1,40) as log from v$logfile;
+select substr(name,1,40) as datafile from v$datafile;
+select substr(name,1,40) as tempfile from v$tempfile;
+select substr(name,1,40) as controlfile from v$controlfile;
+
+
+CONFIGURE RETENTION POLICY TO REDUNDANCY 1; # default
+CONFIGURE BACKUP OPTIMIZATION OFF; # default
+CONFIGURE DEFAULT DEVICE TYPE TO DISK; # default
+CONFIGURE CONTROLFILE AUTOBACKUP ON; # default
+CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO '%F'; # default
+CONFIGURE DEVICE TYPE DISK PARALLELISM 1 BACKUP TYPE TO BACKUPSET; # default
+CONFIGURE DATAFILE BACKUP COPIES FOR DEVICE TYPE DISK TO 1; # default
+CONFIGURE ARCHIVELOG BACKUP COPIES FOR DEVICE TYPE DISK TO 1; # default
+CONFIGURE MAXSETSIZE TO UNLIMITED; # default
+CONFIGURE ENCRYPTION FOR DATABASE OFF; # default
+CONFIGURE ENCRYPTION ALGORITHM 'AES128'; # default
+CONFIGURE COMPRESSION ALGORITHM 'BASIC' AS OF RELEASE 'DEFAULT' OPTIMIZE FOR LOAD TRUE ; # default
+CONFIGURE RMAN OUTPUT TO KEEP FOR 7 DAYS; # default
+CONFIGURE ARCHIVELOG DELETION POLICY TO NONE; # default
+CONFIGURE SNAPSHOT CONTROLFILE NAME TO '/u01/app/oracle/product/19c/dbhome_1/dbs/snapcf_orcl.f'; # default
+
+CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO '/u01/orabackup/ORCL/%F';
+CONFIGURE CHANNEL DEVICE TYPE DISK FORMAT '/u01/orabackup/ORCL/%U';
+CONFIGURE DEFAULT DEVICE TYPE TO DISK '/u01/orabackup/ORCL/backup';
+
+
+/u01/app/oracle/oradata/ORCL/control01.ctl /u01/app/oracle/oradata/ORCL/control02.ctl
+
+*.control_files='/u01/app/oracle/oradata/ORCL/control01.ctl','/u01/app/oracle/oradata/ORCL/control02.ctl'
+
+"/u01/orabackup/ORCL/c-1675038516-20230911-01
+
+allocate channel  device type disk;
+
+run {
+set newname for database   to '/u01/app/oracle/oradata/ORCL/%b';
+set newname for tempfile 1 to '/u01/app/oracle/oradata/ORCL/%b';
+set newname for datafile 1 to '/u01/app/oracle/oradata/ORCL/system.dbf';
+set newname for datafile 3 to '/u01/app/oracle/oradata/ORCL/sysaux.dbf';
+set newname for datafile 4 to '/u01/app/oracle/oradata/ORCL/undotbs01.dbf';
+set newname for datafile 7 to '/u01/app/oracle/oradata/ORCL/users.dbf';
+}
+
+restore database
+switch datafile all
+switch tempfile all
+recover database 
+alter database open resetlog;
+}
+
+
+restore standby controlfile from '/u01/orabackup/ORCL/c-1675038516-20230911-01'
+
+
+
+
+
+
+
+
+
+alter database rename file "+DATA/ORCL/ONLINELOG/group_3.264.1147257 to /u01/app/oracle/oradata/ORCL/redo1.log
+alter database rename file "+DATA/ORCL/ONLINELOG/group_3.266.1147257 to /u01/app/oracle/oradata/ORCL/redo2.log
+alter database rename file "+DATA/ORCL/ONLINELOG/group_2.263.1147257 to /u01/app/oracle/oradata/ORCL/redo3.log
+alter database rename file "+DATA/ORCL/ONLINELOG/group_2.268.1147257 to /u01/app/oracle/oradata/ORCL/redo4.log
+alter database rename file "+DATA/ORCL/ONLINELOG/group_1.265.1147257 to /u01/app/oracle/oradata/ORCL/redo5.log
+alter database rename file "+DATA/ORCL/ONLINELOG/group_1.267.1147257 to /u01/app/oracle/oradata/ORCL/redo6.log
+
++DATA/ORCL/ONLINELOG/group_3.264.1147257
++DATA/ORCL/ONLINELOG/group_3.266.1147257
++DATA/ORCL/ONLINELOG/group_2.263.1147257
++DATA/ORCL/ONLINELOG/group_2.268.1147257
++DATA/ORCL/ONLINELOG/group_1.265.1147257
++DATA/ORCL/ONLINELOG/group_1.267.1147257
+
+
+run {
+# allocate a channel to the tape device
+ALLOCATE CHANNEL d1 DEVICE TYPE disk;
+ALLOCATE CHANNEL d2 DEVICE TYPE disk;
+# rename the datafiles and online redo logs
+SET NEWNAME FOR DATABASE   TO  '/u01/app/oracle/oradata/TEST/%b'; <-- 11g fewture
+SET NEWNAME FOR tempfile  1 TO  '/u01/app/oracle/oradata/TEST/%b';
+SQL "ALTER DATABASE RENAME FILE ''+DATA1/prpt/onlinelog/group_3.264.924539539''
+to ''/u01/app/oracle/oradata/TEST/group_3.264.924539539''" ;
+SQL "ALTER DATABASE RENAME FILE ''+DATA1/prpt/onlinelog/group_2.261.924539539''
+to ''/u01/app/oracle/oradata/TEST/group_2.261.924539539''" ;
+SQL "ALTER DATABASE RENAME FILE ''+DATA1/prpt/onlinelog/group_1.262.924539537''
+to ''/u01/app/oracle/oradata/TEST/group_1.262.924539537''" ;
+# Do a SET UNTIL to prevent recovery of the online logs
+SET UNTIL SEQUENCE 4; <--- 3 + 1
+# restore the database and switch the datafile names
+restore database;
+switch datafile all;
+switch tempfile all;
+# recover the database
+RECOVER DATABASE;
+}
+
+
+
+run {
+SET NEWNAME FOR DATABASE TO '/u01/app/oracle/oradata/ORCL/%b';
+SET NEWNAME FOR tempfile 1 TO '/u01/app/oracle/oradata/ORCL/%b';
+restore database;
+switch datafile all;
+switch tempfile all;
+}

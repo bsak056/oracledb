@@ -1,0 +1,56 @@
+
+
+select owner,job_name,job_creator,state,job_type,last_run_duration,job_action,schedule_type,start_date,repeat_interval,last_start_date,next_run_date from dba_scheduler_jobs
+where owner not  like 'SYS'
+and state!='DISABLED' and last_start_date > sysdate-60
+order by last_run_duration desc;
+
+select sid,serial#,substr(username,1,10) username,substr(osuser,1,10) osuser,substr(program||module,1,15) program,substr(machine,1,22) machine,to_char(logon_time,'ddMon hh24:mi') login,last_call_et "last call",status
+from v$session where status='ACTIVE'
+order by 1
+
+
+CREATE TABLE log_monitor_op
+    (id                             NUMBER,
+    msg                            VARCHAR2(1000 BYTE),
+    event_datetime                 TIMESTAMP (6) DEFAULT sysdate,
+    type                           VARCHAR2(1000 BYTE),
+    note                           VARCHAR2(1000 BYTE))
+  PCTFREE     10
+  INITRANS    1
+  MAXTRANS    255
+  TABLESPACE  USERS_TEMP
+  STORAGE   (
+    INITIAL     65536
+    NEXT        1048576
+    MINEXTENTS  1
+    MAXEXTENTS  2147483645
+  )
+  NOCACHE
+  MONITORING
+  NOPARALLEL
+  LOGGING
+/
+
+CREATE SEQUENCE log_monitor_op_seq
+  START WITH 1
+  MAXVALUE 9999999999999999999999999999
+  MINVALUE 1
+  NOCYCLE
+  CACHE 20
+  NOORDER;
+  
+  
+
+---sql
+set linesize 2000 trims on pagesize 0 feedback off 
+set headling on
+set pagesize 50000
+select sid,serial#,substr(username,1,10) username,substr(osuser,1,10) osuser,substr(program||module,1,15) program,substr(machine,1,22) host,to_char(logon_time,'ddMon hh24:mi') login,last_call_et "last call",status
+from gv$session;
+exit
+
+--filesh
+sqlplus -s / as sysdba >>file.log <<EOF
+@1.sql
+EOF  

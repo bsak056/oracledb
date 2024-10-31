@@ -1,0 +1,35 @@
+rman target / log=//home/oracle/backup/bk_full.log << EOS
+run {
+ALLOCATE CHANNEL c1 DEVICE TYPE DISK; 
+ALLOCATE CHANNEL c2 DEVICE TYPE DISK;  
+ALLOCATE CHANNEL c3 DEVICE TYPE DISK;  
+ALLOCATE CHANNEL c4 DEVICE TYPE DISK; 
+ALLOCATE CHANNEL c5 DEVICE TYPE DISK;  
+ALLOCATE CHANNEL c6 DEVICE TYPE DISK;  
+ALLOCATE CHANNEL c7 DEVICE TYPE DISK; 
+ALLOCATE CHANNEL c8 DEVICE TYPE DISK;  
+ALLOCATE CHANNEL c9 DEVICE TYPE DISK;  
+ALLOCATE CHANNEL c10 DEVICE TYPE DISK; 
+ALLOCATE CHANNEL c11 DEVICE TYPE DISK;  
+ALLOCATE CHANNEL c12 DEVICE TYPE DISK;  
+ALLOCATE CHANNEL c13 DEVICE TYPE DISK; 
+ALLOCATE CHANNEL c14 DEVICE TYPE DISK;  
+ALLOCATE CHANNEL c15 DEVICE TYPE DISK;  
+ALLOCATE CHANNEL c16 DEVICE TYPE DISK;   
+backup as compressed backupset database format '/acfs_backup/backup/database_%U.bkp';
+backup current controlfile format '/acfs_backup/backup/ctrl_%U.bkp';
+sql 'alter system switch logfile';
+backup archivelog all format '/acfs_backup/backup/arch_%U.bkp';
+}
+EOS
+
+
+
+
+  SELECT TO_CHAR ( first_time, ‘DD/MM’) aday,
+         TO_CHAR ( first_time, ‘hh24’) hour,
+         COUNT ( *) total
+    FROM v$log_history
+   WHERE first_time >= TRUNC (SYSDATE – 2 )
+GROUP BY TO_CHAR (first_time, ‘DD/MM’), TO_CHAR (first_time, ‘hh24’)
+ORDER BY total DESC;

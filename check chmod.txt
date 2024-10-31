@@ -1,0 +1,2 @@
+check chmod 
+stat --format %a

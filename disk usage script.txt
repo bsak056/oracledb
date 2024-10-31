@@ -1,0 +1,51 @@
+disk usage
+
+#!/bin/bash
+echo "<p><b>Thong tin diskusage</b></p><table border="1">" > disk_usage.html
+unamestr=uname
+if [[ "$unamestr" == 'AIX' ]]; then
+   disk_command='df -g'
+else
+   disk_command='df -h'
+fi
+
+if ! type "olsnodes" > /dev/null 2>&1; then
+	echo "<p>hostname</p>" >> disk_usage.html
+	$disk_command | awk 'BEGIN{print("<table border=1>")}
+	{
+		if ($2!="0K") {
+			print("<tr><td>",$1,"</td><td>",$2,"</td><td>",$3,"</td><td>",$4,"</td><td>",$5,"</td><td>",$6,$7,"</td></tr>")
+		}
+	}
+	END{
+		print("</table>")
+	}' >> disk_usage.html
+else
+	for node in olsnodes;
+	do
+		cmd_node=echo "$node"|awk '{print $1}'
+		if [ $cmd_node == hostname ] ; then
+			echo "<p>$node</p>" >> disk_usage.html
+			$disk_command | awk 'BEGIN{print("<table border=1>")}
+			{
+				if ($2!="0K") {
+					print("<tr><td>",$1,"</td><td>",$2,"</td><td>",$3,"</td><td>",$4,"</td><td>",$5,"</td><td>",$6,$7,"</td></tr>")
+				}
+			}
+			END{
+				print("</table>")
+			}' >> disk_usage.html
+		else
+			echo "<p>$node</p>" >> disk_usage.html
+			ssh $cmd_node $disk_command | awk 'BEGIN{print("<table border=1>")}
+			{
+				if ($2!="0K") {
+					print("<tr><td>",$1,"</td><td>",$2,"</td><td>",$3,"</td><td>",$4,"</td><td>",$5,"</td><td>",$6,$7,"</td></tr>")
+				}
+			}
+			END{
+				print("</table>")
+			}' >> disk_usage.html
+		fi
+	done
+fi

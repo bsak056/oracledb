@@ -1,0 +1,6 @@
+create tablespace 
+
+https://logic.edchen.org/create-tablespace-examples/
+create tablespace erptbs1 datafile '+DATA/erptbs_01.dbf' size 10m autoextend on next 10m; 
+create tablespace erptbs2 datafile '+DATA/erptbs_02.dbf' size 10m autoextend on next 10m;
+create tablespace erptbs3 datafile '+DATA/erptbs_03.dbf' size 10m autoextend on next 10m;

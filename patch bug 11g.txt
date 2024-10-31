@@ -1,0 +1,7 @@
+patch 11g
+
+CRS-2101:The OLR was formatted using version 3
+[oracle@RAC18C ~]$ export PATH=$ORACLE_HOME/OPatch:$ORACLE_HOME/bin:$PATH
+[oracle@RAC18C ~]$ cd /u01/app/
+[oracle@RAC18C app]$ opatch napply -local /u01/sw/18370031/
+Using which user use for installing grid

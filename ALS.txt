@@ -1,0 +1,21 @@
+ALS
+https://alsvietnam-my.sharepoint.com/:w:/g/personal/hung_le_als_com_vn/EZB7_SAyICtOg__XQn1-ktIBKDYk2fWTzs94sS8X32c6eA?rtime=k7FU3v6h20g
+
+
+https://pw.als.com.vn:7272/
+
+User: mps-asia
+Password: Database!2023
+
+Node 1:10.0.3.11
+Node 2:10.0.3.12
+root/aoms@#45
+oracle/oracle
+sys/Aoms123$
+sysasm/aoms123
+
+Node 1:10.10.0.11
+Node 2:10.10.0.12
+oracle/Alsc@#$%6789o
+root/Alsc@#$%6789o
+SYS/Alsc1234

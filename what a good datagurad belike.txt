@@ -1,0 +1,8 @@
+a good datagurad should like:
+
+db_create_online_log_dest_1          string      +DATA
+dg_broker_config_file1               string      +DATA/dr1rac.dat
+dg_broker_config_file2               string      +DATA/dr2rac.dat
+dg_broker_start                      boolean     TRUE
+log_file_name_convert                string      +DATA/online_logs,+DATA/online_logs
+standby_file_management              string      AUTO

@@ -1,0 +1,2 @@
+col name format a10
+select name, round (space_limit/1048576) As space_limit,round(space_used/1048576) As space_used from v$recovery_file_dest; 

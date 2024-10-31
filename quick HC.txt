@@ -1,0 +1,7 @@
+HC
+
+tar -xvf oswbb.tar 
+./OSWatcher.sh 300 120 None /u01/HC_ver_1.2/oswbb_log_MPS_single.localdomain/
+
+generate dashboard
+java -jar oswbba.jar -i /var/log/oswatcher/

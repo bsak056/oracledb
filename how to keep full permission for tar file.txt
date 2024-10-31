@@ -1,0 +1,4 @@
+giu full quyen khi dung tar
+dùng root để nén file tar , sau đó chown quyền thành grid hoặc oracle
+tiếp dùng root để giải nén file ra
+XONG

@@ -1,0 +1,239 @@
+192.168.30.7 rac19c1.lorac19caldomain rac19c1
+#192.168.30.5 rac19c2.lorac19caldomain rac19c2
+
+192.168.237.5 rac19c1-priv.lorac19caldomain rac19c1-priv
+#192.168.237.8 rac19c2-priv.lorac19caldomain rac19c2-priv
+
+192.168.30.20 rac19c1-vip.lorac19caldomain rac19c1-vip
+#192.168.30.21 rac19c2-vip.lorac19caldomain rac19c2-vip
+
+192.168.30.30 rac19c-scan.localdomain rac19c-scan
+192.168.30.31 rac19c-scan.localdomain rac19c-scan
+192.168.30.32 rac19c-scan.localdomain rac19c-scan
+
+group creation 
+groupadd -g 5001 oinstall
+groupadd -g 5002 dba
+groupadd -g 5003 oper
+groupadd -g 5004 asmadmin
+groupadd -g 5005 asmdba
+groupadd -g 5006 asmoper
+
+User creation
+usermod -g oinstall -G dba,oper,asmdba oracle
+useradd -g oinstall -G asmadmin,asmdba,asmoper,dba grid
+
+usermod -g oinstall -G asmadmin,asmdba,asmoper,dba,oper,backupdba,dgdba,kmdba,racdba oracle
+
+passwd oracle
+passwd grid
+
+
+mkdir -p /u01/app/grid
+mkdir -p /u01/app/19c/gridhome_1
+mkdir -p /u01/app/oraInventory
+mkdir -p /u01/app/oracle
+mkdir -p /u01/app/oracle/product/19c/dbhome_1
+mkdir -p /u01/app/software
+chown -R grid:oinstall /u01
+chown -R oracle:oinstall /u01/app/oracle
+chmod -R 775 /u01/
+
+mkdir -p /u01/app/grid
+mkdir -p /u01/app/12c/gridhome_1
+mkdir -p /u01/app/oraInventory
+mkdir -p /u01/app/oracle
+mkdir -p /u01/app/oracle/product/12c/dbhome_1
+mkdir -p /u01/app/software
+chown -R grid:oinstall /u01
+chown -R oracle:oinstall /u01/app/oracle
+chmod -R 775 /u01/
+
+bash grid 
+export TMP=/tmp
+export TMDIR=$TMP
+export ORACLE_BASE=/u01/app/grid
+export ORACLE_HOME=/u01/app/19c/gridhome_1
+export ORACLE_SID=+ASM1
+export ORACLE_TERM=xterm
+export BASE_PATH=/usr/sbin:$PATH
+export PATH=$ORACLE_HOME/bin:$BASE_PATH
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
+export CLASSPATH=$ORACLE_HOME/JRE:$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib
+
+export TMP=/tmp
+export TMDIR=$TMP
+export ORACLE_BASE=/u01/app/grid
+export ORACLE_HOME=/u01/app/12c/gridhome_1
+export ORACLE_SID=+ASM1
+export ORACLE_TERM=xterm
+export BASE_PATH=/usr/sbin:$PATH
+export PATH=$ORACLE_HOME/bin:$BASE_PATH
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
+export CLASSPATH=$ORACLE_HOME/JRE:$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib
+
+bash oracle
+export TMP=/tmp
+export TMDIR=$TMP
+export ORACLE_BASE=/u01/app/oracle
+export ORACLE_HOME=/u01/app/oracle/product/19c/dbhome_1
+export ORACLE_SID=oraclerac1
+export ORACLE_TERM=xterm
+export BASE_PATH=/usr/sbin:$PATH
+export PATH=$ORACLE_HOME/bin:$BASE_PATH
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
+export CLASSPATH=$ORACLE_HOME/JRE:$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib
+
+export TMP=/tmp
+export TMDIR=$TMP
+export ORACLE_BASE=/u01/app/oracle
+export ORACLE_HOME=/u01/app/oracle/product/12c/dbhome_1
+export ORACLE_SID=oraclerac1
+export ORACLE_TERM=xterm
+export BASE_PATH=/usr/sbin:$PATH
+export PATH=$ORACLE_HOME/bin:$BASE_PATH
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
+export CLASSPATH=$ORACLE_HOME/JRE:$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib
+
+Tắt và disable Firewall:
+Có thể bật lại firewall sau khi cài đặt: 
+
+systemctl stop firewalld.service
+systemctl disable firewalld.service
+
+
+Cấu hình Chrony NTP:
+systemctl enable chronyd.service
+systemctl restart chronyd.service
+chronyc -a 'burst 4/4'
+chronyc -a makestep
+
+
+Install the package cvudisk from the grid home as the “root” user on all nodes.
+
+1st Node
+
+[root@dbwr1 grid]# cd /u01/app/19c/grid/cv/rpm
+[root@dbwr1 rpm]# rpm -Uvh cvuqdisk*
+Preparing… ################################# [100%]
+Using default group oinstall to install package
+Updating / installing…
+1:cvuqdisk-1.0.10-1 ################################# [100%]
+2nd Node
+
+scp ./cvuqdisk* root@dbwr2:/tmp
+ssh root@dbwr2 rpm -Uvh /tmp/cvuqdisk*
+
+
+# Configure Oracle ASM (SD…)
+
+fdisk -l check before formatting
+
+[root@dbwr1 ~]# fdisk /dev/sdb
+Command (m for help): n
+Select (default p): p
+Command (m for help): w
+
+[root@dbwr1 grid]# /usr/sbin/oracleasm configure -i
+Default user to own the driver interface []: oracle
+Default group to own the driver interface []: oinstall
+Start Oracle ASM library driver on boot (y/n) [n]: y
+Scan for Oracle ASM disks on boot (y/n) [y]: y
+check
+
+This can be verified using:-
+
+[root@dbwr1 grid]# /usr/sbin/oracleasm configure
+
+ORACLEASM_ENABLED=true
+ORACLEASM_UID=oracle
+ORACLEASM_GID=oinstall
+ORACLEASM_SCANBOOT=true
+ORACLEASM_SCANORDER=””
+ORACLEASM_SCANEXCLUDE=””
+ORACLEASM_SCAN_DIRECTORIES=””
+ORACLEASM_USE_LOGICAL_BLOCK_SIZE=”false”
+
+Initialize the asmlib with the oracleasm init command to load oracleasm module and mount the oracleasm filesystem:-
+
+[root@dbwr1 grid]# /usr/sbin/oracleasm init
+
+Creating /dev/oracleasm mount point: /dev/oracleasm
+Loading module “oracleasm”: oracleasm
+Configuring “oracleasm” to use device physical block size
+Mounting ASMlib driver filesystem: /dev/oracleasm
+When ASMLIB is configured, a special file system is created and mounted as /dev/oracleasm, you should notice the following line from the df command:-
+
+[root@dbwr1 grid]# oracleasm createdisk ASMDISK_DATA /dev/sdb1
+
+Writing disk header: done
+Instantiating disk: done
+
+[root@dbwr1 grid]# oracleasm createdisk ASMDISK_OCR /dev/sdc1
+
+Writing disk header: done
+Instantiating disk: done
+
+[root@dbwr1 grid]# cd /dev/oracleasm/disks
+
+[root@dbwr1 disks]# ls -lrt
+
+total 0
+brw-rw—-. 1 oracle oinstall 8, 17 Dec 31 11:13 ASMDISK_DATA
+brw-rw—-. 1 oracle oinstall 8, 33 Dec 31 11:13 ASMDISK_OCR
+
+[root@dbwr1 disks]# oracleasm scandisks
+
+Reloading disk partitions: done
+Cleaning any stale ASM disks…
+Scanning system for ASM disks…
+
+[root@dbwr1 disks]# oracleasm listdisks
+
+ASMDISK_DATA
+ASMDISK_OCR
+
+Node 2
+
+[root@dbwr2 grid]# /usr/sbin/oracleasm configure -i 
+
+Configuring the Oracle ASM library driver.
+
+This will configure the on-boot properties of the Oracle ASM library
+driver. The following questions will determine whether the driver is
+loaded on boot and what permissions it will have. The current values
+will be shown in brackets (‘[]’). Hitting <ENTER> without typing an
+answer will keep that current value. Ctrl-C will abort.
+Default user to own the driver interface []: oracle
+Default group to own the driver interface []: oinstall
+Start Oracle ASM library driver on boot (y/n) [n]: y
+Scan for Oracle ASM disks on boot (y/n) [y]: y
+Writing Oracle ASM library driver configuration: done
+
+[root@dbwr2 grid]# /usr/sbin/oracleasm init  (((((((
+
+Creating /dev/oracleasm mount point: /dev/oracleasm
+Loading module “oracleasm”: oracleasm
+Configuring “oracleasm” to use device physical block size
+Mounting ASMlib driver filesystem: /dev/oracleasm
+
+[root@dbwr2 grid]# oracleasm scandisks 
+
+Reloading disk partitions: done
+Cleaning any stale ASM disks…
+Scanning system for ASM disks…
+Instantiating disk “ASMDISK_OCR”
+Instantiating disk “ASMDISK_DATA”
+
+[root@dbwr2 grid]# oracleasm listdisks
+
+ASMDISK_DATA
+ASMDISK_OCR
+
+ssh connect ( deinstall )
+./sshUserSetup.sh -user grid -hosts "tung tung2" -noPromptPassphrase -confirm -advanced
+
+Pre-check for RAC Setup
+[oracle@dbwr1 grid]$ ./runcluvfy.sh stage -pre crsinst -n dbwr1,dbwr2 -verbose
+
+after done grid , install oracle DB softwave and database

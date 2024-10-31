@@ -1,0 +1,8 @@
+note
+spfile xoa config DR
+controlfile
+wallet v$encrypton_wallet
+tnsnames + sqlnet
+
+
+check file wallet md5sum

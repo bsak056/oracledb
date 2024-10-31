@@ -1,0 +1,4 @@
+awr
+@?/rdbms/admin/awrrpt;
+
+@?/rdbms/admin/addmrpt

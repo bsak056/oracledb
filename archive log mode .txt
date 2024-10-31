@@ -1,0 +1,34 @@
+turn on archive log mode 
+
+1, connect SQLPLUS and check status log mode 
+SQL> ARCHIVE LOG LIST;
+
+2, Shutdown immediate
+
+3, Startup mount
+
+4, ALTER DATABASE archivelog;
+
+5, alter database open;
+
+6, SELECT log_mode FROM v$database;
+
+Backup full CDB, PDB và Archivelog
+RMAN> BACKUP AS COMPRESSED BACKUPSET DATABASE PLUS ARCHIVELOG
+DELETE INPUT;
+Backup level 0 CDB, PDB và Archivelog
+RMAN > BACKUP AS COMPRESSED BACKUPSET INCREMENTAL LEVEL 0 DATABASE
+PLUS ARCHIVELOG DELETE INPUT;
+Backup level 1 CDB, PDB và Archivelog
+RMAN > BACKUP AS COMPRESSED BACKUPSET INCREMENTAL LEVEL 1 DATABASE
+PLUS ARCHIVELOG DELETE INPUT;
+Backup controlfile
+RMAN > BACKUP CURRENT CONTROLFILE;
+Backup một hoặc nhiều PDB
+RMAN > BACKUP PLUGGABLE DATABASE PDB1,PDB2;
+Liệt kê backup
+RMAN> LIST BACKUP hoặc LIST BACKUP SUMMARY;
+Xem backup lỗi thời
+RMAN> REPORT OBSOLETE;
+Xóa backup lỗi thời
+RMAN> DELETE OBSOLETE;

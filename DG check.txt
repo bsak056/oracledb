@@ -1,0 +1,35 @@
+
+select name,open_mode,database_role from v$database;
+select to_char(current_scn) from v$database;
+select scn_to_timestamp (current_scn) from v$database;
+
+col name format a10;
+col value format a15;
+col datum_time format a20;
+col time_computed format a20;
+select name,value,datum_time,time_computed from v$dataguard_stats;
+select name,value,datum_time,time_computed from v$dataguard_stats where name like '% lag';
+
+select name,value,datum_time,time_computed from gv$dataguard_stats;
+
+
+scrvctl start vip - node 
+
+
+alter database recover managed standby database disconnect from session;
+
+alter database recover managed standby database using current logfile disconnect from session;
+
+SELECT THREAD#, MAX(SEQUENCE#) FROM V$ARCHIVED_LOG
+WHERE APPLIED = 'YES'
+AND RESETLOGS_CHANGE# = (SELECT RESETLOGS_CHANGE#
+FROM V$DATABASE_INCARNATION WHERE STATUS = 'CURRENT')
+GROUP BY THREAD#;
+
+
+select sequence#,first_change#, to_char(first_time,'HH24:MI:SS') from v$log;
+
+
+SELECT name, value, datum_time, time_computed 
+FROM v$dataguard_stats 
+WHERE name like 'apply lag';

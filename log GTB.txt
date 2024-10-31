@@ -1,0 +1,7 @@
+Here is a remote ID for your access and DB name to health check.
+
+Anydesk ID : 612070333
+
+Health check DB1 - FNGTB1	(Core Banking DB) /rman_backup/dump/
+
+Health check DB2 - FNGTBE1	(Channel Banking DB) /home/oracle/
