@@ -1,0 +1,64 @@
+11.2.0.4,12c2 to 19c
+
+#Requeriments
+
+- The source database must be a version compatible with the direct upgrade to 19c. ( 11gR2, 12cR2 an 18c )
+- You should already have installed only software of Oracle Database 19c.
+- Target ORACLE_HOME must have the latest level of RU Patches. Database 19c Proactive Patch Information (Doc ID 2521164.1)
+
+#Pre-upgraded
+
+- Copy the last autoupgrade.jar (  2485457.1 )
+cd /u01/app/oracle/product/19.0.0.0/dbhome_1/rdbms/admin
+cp /downloads/autoupgrade.jar /u01/app/oracle/product/19.0.0.0/dbhome_1/rdbms/admin
+
+- export the old HOME and make file sample config
+export ORACLE_HOME=/u01/app/oracle/product/11.2.0.4/dbhome_1
+export JAVA_HOME=/home/oracle/autoupgrade/jdk1.8.0_351
+export PATH=$JAVA_HOME/bin:$PATH
+
+$ORACLE_BASE/product/19.0.0.0/dbhome_1/jdk/bin/java -jar $ORACLE_BASE/product/19.0.0/dbhome_1/rdbms/admin/autoupgrade.jar -create_sample_file config /tmp/config.cfg
+
+- Edit sample files (/tmp/config.cfg) comfortable for new home
+
+upg1.log_dir=/u01/app/oracle/cfgtoollogs/autoupgrade/
+upg1.sid=test
+upg1.source_home=/u01/app/oracle/product/11.2.0.4/dbhome_1
+upg1.target_home=/u02/app/oracle/product/19.0.0.0/dbhome_1
+upg1.start_time=NOW
+upg1.upgrade_node=localhost
+upg1.run_utlrp=yes
+upg1.timezone_upg=yes
+upg1.target_version=19
+
+#Upgraded
+1.Analyze
+- Run the upgrade in analyze mode to validate any expected issues with the upgrade
+
+$ORACLE_BASE/product/19.0.0.0/dbhome_1/jdk/bin/java -jar $ORACLE_BASE/product/19.0.0/dbhome_1/rdbms/admin/autoupgrade.jar -config /tmp/config.cfg -mode analyze
+
+- Review report orcl/100/prechecks/orcl_preupgrade.html
+
+2.Fixup
+java -jar autoupgrade.jar -config /tmp/config.cfg -mode fixups
+
+BEGIN
+   SYS.DBMS_STATS.GATHER_INDEX_STATS('SYS', 'I_OBJ#');
+   SYS.DBMS_STATS.GATHER_SCHEMA_STATS('SYS');
+   SYS.DBMS_STATS.GATHER_SCHEMA_STATS('SYSTEM');
+END;
+/
+
+BEGIN
+   SYS.DBMS_STATS.GATHER_FIXED_OBJECTS_STATS;
+END;
+/
+
+PURGE DBA_RECYCLEBIN
+/
+
+3.Upgrade 
+export ORACLE_SID=orcl
+java -jar autoupgrade.jar -config /tmp/config.cfg -mode upgrade
+
+
